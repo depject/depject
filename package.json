@@ -1,11 +1,11 @@
 {
-  "name": "uideps",
-  "description": "",
+  "name": "depject",
+  "description": "simplest dependency injection",
   "version": "0.0.0",
-  "homepage": "https://github.com/dominictarr/uideps",
+  "homepage": "https://github.com/dominictarr/depject",
   "repository": {
     "type": "git",
-    "url": "git://github.com/dominictarr/uideps.git"
+    "url": "git://github.com/dominictarr/depject.git"
   },
   "dependencies": {
   },
