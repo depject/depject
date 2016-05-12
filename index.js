@@ -2,7 +2,9 @@
 
 
 function copy(from, to) {
-  (from || []).forEach(function (e) { to.push(e) })
+  (from || []).forEach(function (e) {
+    to.forEach(function (to) { to.push(e) })
+  })
 }
 
 
@@ -11,11 +13,8 @@ function combine(args) {
   var sockets = {}
   args.forEach(function (mod) {
     for(var k in mod) {
-      if(Array.isArray(mod[k])) {
-        if(sockets[k])
-          throw new Error('duplicate socket apis: '+k)
-        sockets[k] = mod[k]
-      }
+      if(Array.isArray(mod[k]))
+        (sockets[k] = sockets[k] || []).push(mod[k])
       else if('function' == typeof mod[k])
         (plugs[k] = plugs[k] || []).push(mod[k])
     }
@@ -28,3 +27,5 @@ function combine(args) {
 
 
 module.exports = combine
+
+
