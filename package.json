@@ -1,7 +1,7 @@
 {
   "name": "depject",
   "description": "simplest dependency injection",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "homepage": "https://github.com/dominictarr/depject",
   "repository": {
     "type": "git",
