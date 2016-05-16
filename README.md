@@ -4,9 +4,9 @@ minimal dependency injection
 
 ## module api
 
-a is an object with named functions and arrays.
-functions are represent _plugs_ and arrays represent _sockets_.
-plugs are pluged into sockets. modules may expose plugs,
+a module is an object with named functions and arrays.
+functions represent _plugs_ and arrays represent _sockets_.
+plugs are plugged into sockets. modules may expose plugs,
 and may create new sockets. The creator of a socket gets to choose
 the signature of that socket, i.e. what arguments it's called with,
 and also how multiple plugs are combined together.
