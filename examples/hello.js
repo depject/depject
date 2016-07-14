@@ -1,29 +1,31 @@
 var combine = require('../')
 
 var hi = {
-  hello: function (name) {
-    console.log(
-      hi.decorate_hello.reduce(function (name, dec) {
-        return dec(name)
-      }, name)
-    )
-  },
-  decorate_hello: []
+  needs: {decorate: 'reduce'},
+  gives: 'hello',
+  create: function (sockets) {
+    return function (name) {
+      return sockets.decorate(name)
+    }
+  }
 }
 
 var capitalize = {
-  decorate_hello: function (name) {
-    return name[0].toUpperCase() + name.substring(1).toLowerCase()
+  gives: 'decorate',
+  create: function () {
+    return function (name) {
+      return name.toUpperCase()
+    }
   }
 }
 
 var greet = {
-  decorate_hello: function (name) {
-    return 'Hello, '+name
+  gives: 'decorate',
+  create: function () {
+    return function (name) {
+      return 'Hello, '+name
+    }
   }
 }
-combine([hi, capitalize, greet])
 
-hi.hello('dominic')
-
-
+console.log(combine([hi, capitalize, greet]).hello[0]('dominic'))
