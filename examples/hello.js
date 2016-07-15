@@ -22,7 +22,7 @@ var greet = {
     return 'Hello, '+name
   }
 }
-combine([hi, capitalize, greet])
+combine({hi:hi, cap: capitalize, greet: greet})
 
 hi.hello('dominic')
 
