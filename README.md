@@ -44,7 +44,8 @@ var greet = {
     return 'Hello, '+name
   }
 }
-combine([hi, capitalize, greet])
+var modules = {hi: hi, cap: capitalize, greet: greet}
+combine(modules)
 
 hi.hello('dominic')
 ```
@@ -65,6 +66,22 @@ to bother the maintainer of `hello` because you wanted it capitalized.
 ### combine ([modules...])
 
 takes an array of modules and plugs every plug into the relavant socket.
+
+## graphs!
+
+once you have assembled the modules, you may also generate a `.dot` file of the
+module graph, which can be interesting too look at.
+
+``` js
+//graph.js
+console.log(require('depject/graph')(modules))
+```
+
+then run it through `dot`
+
+`node graph.js | dot -Tsvg > graph.svg`
+
+see also [patchbay graph](https://github.com/dominictarr/patchbay/blob/master/graph.svg)
 
 ## License
 
