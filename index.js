@@ -53,7 +53,6 @@ function setup(sockets, needs) {
 }
 
 function satisfy(sockets, module, add) {
-  console.log('SAT?', module)
   var added = false
   if(!module.needs) {
     append(add, module.gives, module.create())
