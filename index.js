@@ -21,15 +21,14 @@ function isObject(o) {
   return o && 'object' === typeof o && !isArray(o)
 }
 
-function combine(args, names) {
-  var modules = {}
-  if(isArray(args) && isArray(names)) {
-    args.forEach(function (v, i) {
-      modules[names[i]] = args[i]
-    })
-  }
-  else if(isObject(args))
-    modules = args
+function combine() {
+
+  var modules = [].slice.call(arguments).reduce(function (a, b) {
+    for(var k in b)
+      if(!b[k]) delete a[k]
+      else      a[k] = b[k]
+    return a
+  }, {})
 
   var plugs = {}
   var sockets = {}
