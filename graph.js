@@ -1,5 +1,5 @@
 function dot(s) {
-  return s.replace('.js', '_JS').replace('-', '_')
+  return s.replace('.js', '_JS').replace(/-/g, '_')
 }
 
 function each(obj, iter) {
@@ -62,7 +62,8 @@ exports.toDot = function (g, name) {
       once(dot(k)+'->'+dot(j))
       if(Array.isArray(g[k][j]))
         g[k][j].forEach(function (dest) {
-          once(dot(j)+'->'+dot(dest))
+          if(dest)
+            once(dot(j)+'->'+dot(dest))
         })
       else
         once(dot(j)+'->'+dot(g[k][j]))
@@ -74,4 +75,5 @@ exports.toDot = function (g, name) {
 
   return s
 }
+
 
