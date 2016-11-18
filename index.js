@@ -74,14 +74,6 @@ function satisfy(sockets, module, add) {
 module.exports  = function combine (modules, entry, type) {
   //iterate over array, and collect new plugs which are satisfyable.
 
-  if(entry)
-    modules.push({
-      needs: entry+':'+(type||'first'),
-      create: function (entry) {
-        return entry
-      }
-    })
-
   var sockets = {}
   while (true) {
     var newSockets = {}
@@ -96,8 +88,12 @@ module.exports  = function combine (modules, entry, type) {
       for(var k in newSockets)
         append(sockets, k, newSockets[k])
 
-    if(!modules.length)
+    if(!modules.length) {
+      if(entry) {
+        return apply[type || 'first'](sockets[entry])
+      }
       return sockets
+    }
   }
 
 }
