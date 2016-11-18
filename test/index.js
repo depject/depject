@@ -13,7 +13,15 @@ tape('simple', function (t) {
 
 tape('entry', function (t) {
   t.equal(Combine([hello.hi, hello.greet], 'hello')('depject'), 'Hello, depject')
-//  t.equal(Combine([hello.hi, hello.capitalize, hello.greet]).hello[0]('depject'), 'Hello, DEPJECT')
+  t.equal(Combine([hello.hi, hello.capitalize, hello.greet], 'hello')('depject'), 'Hello, DEPJECT')
 
   t.end()
 })
+
+tape('from object', function (t) {
+  t.equal(Combine(hello, 'hello')('depject'), 'Hello, DEPJECT')
+
+  t.end()
+})
+
+
