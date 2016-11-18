@@ -52,10 +52,10 @@ function setup(sockets, needs) {
   }
 }
 
-function satisfy(sockets, module, add) {
+function satisfy(sockets, module, ary) {
   var added = false
   if(!module.needs) {
-    append(add, module.gives, module.create())
+    append(ary, module.gives, module.create())
     return true
   }
   else if(hasAll(sockets, keys(module.needs))) {
@@ -64,11 +64,21 @@ function satisfy(sockets, module, add) {
       _sockets[name] = apply[module.needs[name]](sockets[name])
     })
     eachPlug(module.gives, module.create(_sockets), function (name, fn) {
-      append(add, name, fn)
+      append(ary, name, fn)
     })
     return true
   }
   return false
+}
+
+function filter(modules, fn) {
+  if(Array.isArray(modules))
+    return modules.filter(fn)
+  var o = {}
+    for(var k in modules)
+      if(fn(modules[k], k, modules))
+        o[k] = modules[k]
+  return o
 }
 
 module.exports  = function combine (modules, entry, type) {
@@ -78,7 +88,7 @@ module.exports  = function combine (modules, entry, type) {
   while (true) {
     var newSockets = {}
     var _modules = modules
-    modules = modules.filter(function (module) {
+    modules = filter(modules, function (module) {
       return !satisfy(sockets, module, newSockets)
     })
 
@@ -88,7 +98,7 @@ module.exports  = function combine (modules, entry, type) {
       for(var k in newSockets)
         append(sockets, k, newSockets[k])
 
-    if(!modules.length) {
+    if(isEmpty(modules)) {
       if(entry) {
         return apply[type || 'first'](sockets[entry])
       }
