@@ -18,10 +18,20 @@ tape('entry', function (t) {
   t.end()
 })
 
-tape('from object', function (t) {
-  t.equal(Combine(hello, 'hello')('depject'), 'Hello, DEPJECT')
+//tape('from object', function (t) {
+//  t.equal(Combine([{hi: hello.hi}, {greet: hello.greet, capitalize: hello.capitalize}], 'hello')('depject'), 'Hello, DEPJECT')
+//
+//  t.end()
+//})
+//
 
+var isModule = require('../is')
+
+tape('isModule', function (t) {
+
+  t.notOk(isModule(hello))
+  for(var k in hello)
+    t.ok(isModule(hello[k]))
   t.end()
+
 })
-
-
