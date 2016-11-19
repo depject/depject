@@ -81,8 +81,15 @@ function filter(modules, fn) {
   return o
 }
 
-module.exports  = function combine (modules, entry, type) {
+module.exports  = function combine () {
   //iterate over array, and collect new plugs which are satisfyable.
+
+  var modules = [].slice.call(arguments).reduce(function (a, b) {
+    for(var k in b)
+      if(!b[k]) delete a[k]
+      else      a[k] = b[k]
+    return a
+  }, {})
 
   var sockets = {}
   while (true) {
@@ -98,13 +105,11 @@ module.exports  = function combine (modules, entry, type) {
       for(var k in newSockets)
         append(sockets, k, newSockets[k])
 
-    if(isEmpty(modules)) {
-      if(entry) {
-        return apply[type || 'first'](sockets[entry])
-      }
+    if(isEmpty(modules))
       return sockets
-    }
   }
 
 }
+
+
 
