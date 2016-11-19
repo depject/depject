@@ -41,4 +41,14 @@ tape('from object', function (t) {
 })
 
 
+tape('from object', function (t) {
+  t.equal(apply.first(Combine(
+      hello,
+      {capitalize: false}
+   ).hello)('depject'), 'Hello, depject')
+
+  t.end()
+})
+
+
 
