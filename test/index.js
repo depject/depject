@@ -1,4 +1,4 @@
-
+var apply = require('../apply')
 
 var hello = require('../examples/hello')
 var Combine = require('../')
@@ -12,18 +12,12 @@ tape('simple', function (t) {
 })
 
 tape('entry', function (t) {
-  t.equal(Combine([hello.hi, hello.greet], 'hello')('depject'), 'Hello, depject')
-  t.equal(Combine([hello.hi, hello.capitalize, hello.greet], 'hello')('depject'), 'Hello, DEPJECT')
+  t.equal(apply.first(Combine([hello.hi, hello.greet]).hello)('depject'), 'Hello, depject')
+  t.equal(apply.first(Combine([hello.hi, hello.capitalize, hello.greet]).hello)('depject'), 'Hello, DEPJECT')
 
   t.end()
 })
 
-//tape('from object', function (t) {
-//  t.equal(Combine([{hi: hello.hi}, {greet: hello.greet, capitalize: hello.capitalize}], 'hello')('depject'), 'Hello, DEPJECT')
-//
-//  t.end()
-//})
-//
 
 var isModule = require('../is')
 
@@ -35,3 +29,16 @@ tape('isModule', function (t) {
   t.end()
 
 })
+
+
+tape('from object', function (t) {
+  t.equal(apply.first(Combine(
+      {hi: hello.hi},
+      {capitalize: hello.capitalize, greet: hello.greet}
+   ).hello)('depject'), 'Hello, DEPJECT')
+
+  t.end()
+})
+
+
+
