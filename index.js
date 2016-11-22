@@ -51,38 +51,28 @@ module.exports  = function combine () {
     var newSockets = {}
     //filter modules that have not been resolved yet.
     modules = filter(modules, function (module) {
-      //if this module can now be resolved, initialize it and merge into newSockets
-      if(N.each(module.needs, function (type, path) {
+      //if this module cannot be resolved yet, keep it for next time.
+      if(!N.each(module.needs, function (type, path) {
         if(!N.get(sockets, path)) return false
-      })) {
+      })) return true
 
-        var m
+      //collect the functions that this module needs.
+      var m = N.map(module.needs, function (type, path) {
+          var a = N.get(sockets, path)
+          if(isArray(a)) return apply[type](a)
+          else           throw new Error('expected array at path:'+path.join('.'))
+        })
 
-        //collect the functions that this module needs.
-        if(isString(modules.needs)) {
-          m = module.create(sockets[module.needs])
-        }
-        else
-          m = N.map(module.needs, function (type, path) {
-            var a = N.get(sockets, path)
-            if(isArray(a)) return apply[type](a)
-            else           throw new Error('expected array at path:'+path.join('.'))
-          })
+      //create module, and get function(s) it returns.
+      var exported = module.create(m)
 
-        //create module, and get functions it returns.
-        var exported = module.create(m)
-
-        //for the functions it declares, merge these into newSockets
-        if(isString(module.gives)) {
-          (newSockets[module.gives] = newSockets[module.gives] || []).push(exported)
-        }
-        else
-          N.each(module.gives, function (_, path) {
-            append(newSockets, path, N.get(exported, path))
-          })
-      }
+      //for the functions it declares, merge these into newSockets
+      if(isString(module.gives))
+        append(newSockets, [module.gives], exported)
       else
-        return true
+        N.each(module.gives, function (_, path) {
+          append(newSockets, path, N.get(exported, path))
+        })
     })
 
     if(isEmpty(newSockets))
@@ -95,8 +85,13 @@ module.exports  = function combine () {
     if(isEmpty(modules))
       return sockets
   }
-
 }
+
+
+
+
+
+
 
 
 
