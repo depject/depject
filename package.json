@@ -7,7 +7,9 @@
     "type": "git",
     "url": "git://github.com/dominictarr/depject.git"
   },
-  "dependencies": {},
+  "dependencies": {
+    "libnested": "^1.1.0"
+  },
   "devDependencies": {
     "tape": "^4.6.2"
   },
