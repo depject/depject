@@ -33,6 +33,6 @@ module.exports = {
 }
 
 if(!module.parent) {
-  console.log(combine([hi, capitalize, greet]))
   console.log(combine([hi, capitalize, greet]).hello[0]('dominic'))
 }
+
