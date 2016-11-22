@@ -10,7 +10,7 @@ var blobs = {
 var image = {
   needs: {blobs: {add: 'first'}},
   gives: 'start',
-  create: function (b) {
+  create: function (api) {
     return function (n) {
       api.blobs.add(n)
     }
