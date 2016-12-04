@@ -97,6 +97,8 @@ module.exports  = function combine () {
         })
 
       //create module, and get function(s) it returns.
+      if(!isFunction(module.create))
+        throw new Error('module:'+key + ' did not have a create function')
       var exported = module.create(m)
 
       //for the functions it declares, merge these into newSockets
