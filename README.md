@@ -59,7 +59,7 @@ and exports.
 and object where each key is a name `{<name>: true,...}`.
 
 `needs` is a map of names to types. `{<name> : "map"|"first"}`
-the type determins how the modules returned values are handled.
+the type determines how the modules returned values are handled.
 If it's `'first'` then the first non null value is returned.
 if it's `'map'` then an array of values is returned.
 
