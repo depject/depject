@@ -1,8 +1,14 @@
-# depject
+# depject [![NPM version](https://badge.fury.io/js/depject.svg)](https://npmjs.org/package/depject) [![Build Status](https://travis-ci.org/dominictarr/depject.svg?branch=master)](https://travis-ci.org/dominictarr/depject)
 
-minimal dependency injection
+> simplest dependency injection
 
-## module api
+## Installation
+
+```sh
+$ npm install --save depject
+```
+
+## philosophy 
 
 A module exposes features to be used by other modules,
 and may also depend on features provided by other modules.
@@ -45,68 +51,63 @@ We want to call all the renderers, and get the first one that knows how to handl
 
 ### map - get each module's opinion about a thing.
 
-say we have a menu that is actions which may be performed on a thing.
+Say we have a menu that is actions which may be performed on a thing.
 We map the modules over that thing, and add all returned items to a menu.
 
+### reduce - compose each modules opinion about a thing into one opinion.
+
+We might want to allow other modules to decorate the value given by our module
 
 ## api
 
-Each module is an object which exposes `{needs, gives, create}` properties.
-`needs` and `gives` describe the module features that this module requires,
-and exports.
+Each module is an object which exposes `{needs, gives, create}' properties. 'needs' and 'gives' describe the module features that this module requires, and exports.
 
-`gives` is a sting name of it's export, or if there are multiple exports,
-and object where each key is a name `{<name>: true,...}`.
+`needs` Is a string name of it's export, or if there are multiple exports an object where each key is a name {<name>: true,...}. 
 
-`needs` is a map of names to types. `{<name> : "map"|"first"}`
-the type determins how the modules returned values are handled.
-If it's `'first'` then the first non null value is returned.
-if it's `'map'` then an array of values is returned.
+`gives` Is a string name of it's export, or if there are multiple exports an object where each key is a name {<name>: true,...}. 
 
-`create` is a function that is called with an object connected to modules which provide
-the `needs` and must return a value which provides the `gives`. 
+`create` Is a function that is called with an object connected to modules which provide the `needs` and must return a value which provides the `gives` or an object with keys that match what the module `gives`.
+
+`combine` Takes an array of objects that have the keys `create` (mandatory), `gives` (optional) and `needs` (optional).
 
 ### combine
 
-actually connect all the modules together!
+Actually connect all the modules together!
 
 `combine([modules...])`
 
-this will return an array object of arrays of plugs.
+This will return an array object of arrays of plugs.
 
 ### design questions
 
-should `combine` have a way to specify the public interface?
-should there be a way to create a routed plugin?
+Should `combine` have a way to specify the public interface?
+Should there be a way to create a routed plugin?
 i.e. check a field and call a specific plugin directly?
-how does this interact with interfaces provided remotely,
+How does this interact with interfaces provided remotely,
 i.e. muxrpc?
-
-## example
-
 
 ## api
 
 ### combine ([modules...])
 
-takes an array of modules and plugs every plug into the relavant socket.
+Takes an array of modules, resolves dependencies and injects them into each module. 
+
+## graphs!
+
+Once you have assembled the modules, you may also generate a `.dot` file of the
+module graph, which can be interesting too look at.
+
+``` js
+//graph.js
+console.log(require('depject/graph')(modules))
+```
+
+then run it through `dot`
+
+`node graph.js | dot -Tsvg > graph.svg`
+
+see also [patchbay graph](https://github.com/dominictarr/patchbay/blob/master/graph.svg)
 
 ## License
 
-MIT
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+MIT © [Dominic Tarr](http://dominictarr.com)
