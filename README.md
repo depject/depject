@@ -58,6 +58,63 @@ We map the modules over that thing, and add all returned items to a menu.
 
 We might want to allow other modules to decorate the value given by our module
 
+## example
+
+### Using `first`
+
+```js
+const combine = require('depject')
+
+const cats = {
+  gives: 'speak',
+  create: () => (type) => type === 'cat' ? 'Meow' : undefined 
+}
+
+const dogs = {
+  gives: 'speak',
+  create: () => (type) => type === 'dog' ? 'Woof' : undefined 
+}
+
+const animals = {
+  needs: {speak: 'first'},
+  gives: 'animals',
+  create: (modules) => () => () => modules.speak("dog")
+}
+
+var combined = combine([cats, dogs, animals])
+
+var myAnimals = combined.animals[0]()
+
+console.log(myAnimals())
+```
+
+### Using `map`
+
+```js
+const combine = require('depject')
+
+const cats = {
+  gives: 'names',
+  create: () => () => 'Fluffy' 
+}
+
+const dogs = {
+  gives: 'names',
+  create: () => () => 'Rex' 
+}
+
+const animals = {
+  needs: {names: 'map'},
+  gives: 'animals',
+  create: (modules) => () => () => modules.names()
+}
+
+var combined = combine([cats, dogs, animals])
+
+var myAnimals = combined.animals[0]()
+
+console.log(myAnimals())
+```
 ## api
 
 ### modules
