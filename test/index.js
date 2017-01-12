@@ -225,6 +225,22 @@ test('when a module needs the first of dependencies it receives the first module
 
 test('when a module needs the reduce of dependencies it receives the result of applying all', function(t) {
 
+  const a = {
+    needs: {ideas: 'reduce'},
+    gives: 'a',
+    create: (api) => api.ideas
+  }
+  const b = {
+    gives: 'ideas',
+    create: () => (ideas) => ideas + 'sink' 
+  }
+  const c = {
+    gives: 'ideas',
+    create: () => (ideas) => ideas + 'swim' 
+  }
+
+  var api = Combine([a, b, c])
+  t.equal(api.a[0](''), 'sinkswim')
   t.end()
 })
 
