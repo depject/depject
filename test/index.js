@@ -75,7 +75,7 @@ test('one module depends on a module that depends on another', function(t) {
   }
   const c = {
     gives: 'c',
-    create: (api) => () => true 
+    create: () => () => true 
   }
 
   var api = Combine([a, b, c])
@@ -162,7 +162,22 @@ test('throws if need type is not first, map or reduce', function(t) {
 })
 
 test('when a module needs a map of dependencies it receives an array of all the modules', function(t) {
+  const a = {
+    needs: {ideas: 'map'},
+    gives: 'a',
+    create: (api) => api.ideas
+  }
+  const b = {
+    gives: 'ideas',
+    create: () => () => 'sink' 
+  }
+  const c = {
+    gives: 'ideas',
+    create: () => () => 'swim' 
+  }
 
+  var api = Combine([a, b, c])
+  t.ok(Array.isArray(api.a[0]()))
   t.end()
 })
 
