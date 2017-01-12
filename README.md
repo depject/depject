@@ -86,6 +86,7 @@ var combined = combine([cats, dogs, animals])
 var myAnimals = combined.animals[0]()
 
 console.log(myAnimals())
+//Woof
 ```
 
 ### Using `map`
@@ -114,6 +115,7 @@ var combined = combine([cats, dogs, animals])
 var myAnimals = combined.animals[0]()
 
 console.log(myAnimals())
+//['Fluffy', 'Rex']
 ```
 ## api
 
