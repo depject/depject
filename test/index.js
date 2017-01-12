@@ -241,15 +241,44 @@ test('when a module needs the reduce of dependencies it receives the result of a
 
   var api = Combine([a, b, c])
   t.equal(api.a[0](''), 'sinkswim')
+  var api = Combine([a, c, b])
+  t.equal(api.a[0](''), 'swimsink', 'ordering works correctly')
   t.end()
 })
 
 test('a module can give multiple exports', function(t) {
 
+  const a = {
+    gives: {ideas: true, thoughts: true},
+    create: () => ({
+      ideas: () => 'idea',
+      thoughts: () => 'thought' 
+    }) 
+  }
+
+  var api = Combine([a])
+  t.ok(api.ideas && api.thoughts)
   t.end()
 })
 
 test('a module can need multiple imports', function(t) {
 
+  const a = {
+    needs: {ideas: 'first', thoughts: 'first'},
+    gives: 'a',
+    create: (api) => () => api.ideas() + api.thoughts()  
+  }
+
+  const b = {
+    gives: 'ideas',
+    create: () => () => 'idea'
+  }
+  const c = {
+    gives: 'thoughts',
+    create: () => () => 'thought'
+  }
+
+  var api = Combine([a, b, c])
+  t.equal(api.a[0](), 'ideathought')
   t.end()
 })
