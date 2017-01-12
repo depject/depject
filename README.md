@@ -155,22 +155,6 @@ i.e. check a field and call a specific plugin directly?
 How does this interact with interfaces provided remotely?
 i.e. muxrpc?
 
-## graphs!
-
-once you have assembled the modules, you may also generate a `.dot` file of the
-module graph, which can be interesting too look at.
-
-``` js
-//graph.js
-console.log(require('depject/graph')(modules))
-```
-
-then run it through `dot`
-
-`node graph.js | dot -Tsvg > graph.svg`
-
-see also [patchbay graph](https://github.com/dominictarr/patchbay/blob/master/graph.svg)
-
 ## License
 
 MIT © [Dominic Tarr](http://dominictarr.com)
