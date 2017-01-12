@@ -1,5 +1,13 @@
 var N = require('libnested')
 
+var isModule = require('./is')
+
+function hasAll(set, keys) {
+  return keys.every(function (k) {
+    return !!set[k]
+  })
+}
+
 function isString (s) {
   return typeof s === 'string'
 }
@@ -12,6 +20,12 @@ function isEmpty (e) {
 function isFunction (f) {
   return typeof f === 'function'
 }
+
+function isObject (o) {
+  return o && 'object' === typeof o
+}
+
+var isArray = Array.isArray
 
 var apply = require('./apply')
 
@@ -37,13 +51,12 @@ function append (obj, path, value) {
 module.exports = function combine () {
   // iterate over array, and collect new plugs which are satisfyable.
 
-  var modules = [].slice.call(arguments).reduce(function (a, b) {
-    for (var k in b) {
-      if (!b[k]) delete a[k]
-      else a[k] = b[k]
-    }
-    return a
-  }, {})
+  var modules = {}
+  ;[].slice.call(arguments).forEach(function (moduleSet) {
+    eachModule(moduleSet, function (value, path) {
+      modules[path.join('/')] = value
+    })
+  })
 
   var allNeeds = {}
   var allGives = {}
@@ -115,3 +128,12 @@ module.exports = function combine () {
   }
 }
 
+function eachModule (obj, iter, _a) {
+  _a = _a || []
+  for(var k in obj) {
+    if(isObject(obj[k])) {
+      if(isModule(obj[k])) iter(obj[k], _a.concat(k))
+      else eachModule(obj[k], iter, _a.concat(k))
+    }
+  }
+}
