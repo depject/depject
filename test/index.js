@@ -7,50 +7,44 @@ test('combine is a function', function(t) {
 })
 
 test('combine one module', function(t) {
-  t.plan(3)
-  theCats = ['fluffy']
 
   const cats = {
     gives: 'cats',
     create: () => {
       t.ok(true, 'create is called')
-      return (_cats) => { return {cats: () => _cats}}
+      return () => () => true
     }
   }
 
-  var modules = Combine([cats])
+  var api = Combine([cats])
   
-  t.ok(modules.cats, 'Combine returns an object with keys that match the keys given by all the modules')
-  t.deepEqual(modules.cats[0](theCats).cats(), theCats, 'can depend on one module')
+  t.ok(api.cats, 'Combine returns an object with keys that match the keys given by all the modules')
+  t.end()
 })
 
 test('combine two modules', function(t) {
-  t.plan(5)
-  theCats = ['fluffy']
-  theClient = ['client']
 
   const cats = {
     gives: 'cats',
     create: () => {
       t.ok(true, 'create is called')
-      return (_cats) => {return {cats: id => _cats}}
+      return () => () => true
     }
   }
 
   const client = {
     needs: {cats: 'first'},
     gives: 'client',
-    create: (modules) => {
-      t.ok(modules.cats, 'create is called with object that has keys given by other modules')
-      return (_client) => {return {client: () => _client}}
+    create: (api) => {
+      t.ok(api.cats, 'create is called with object that has keys given by other modules')
+      return () => () => true
     } 
   }
 
-  var modules = Combine([client, cats])
+  var api = Combine([client, cats])
   
-  t.ok(modules.cats && modules.client, 'Combine returns an object with keys that match the keys given by all the modules')
-  t.deepEqual(modules.cats[0](theCats).cats(), theCats, 'can depend on module one')
-  t.deepEqual(modules.client[0](theClient).client(), theClient, 'can depend on module two')
+  t.ok(api.cats && api.client, 'Combine returns an object with keys that match the keys given by all the modules')
+  t.end()
 })
 
 test('combine takes an array of modules and throws if not an array', function(t) {
@@ -60,30 +54,78 @@ test('combine takes an array of modules and throws if not an array', function(t)
   const cats = {
     gives: 'cats',
     create: () => {
-      t.ok(true, 'create is called')
-      return () => {cats: id => _cats}
+      return () => () => true
     }
   }
 
-  var modules = t.throws(() => Combine(cats))
+  var api = t.throws(() => Combine(cats))
 })
 
 test('one module depends on a module that depends on another', function(t) {
 
+  const a = {
+    needs: {b: 'first'},
+    gives: 'a',
+    create: (api) => api.b
+  }
+  const b = {
+    needs: {c: 'first'},
+    gives: 'b',
+    create: (api) => api.c
+  }
+  const c = {
+    gives: 'c',
+    create: (api) => () => true 
+  }
+
+  var api = Combine([a, b, c])
+  t.ok(api.a[0]())
   t.end()
 })
 
 test('two modules depend on each other', function(t) {
+  const cats = {
+    needs: {dogs: 'first'},
+    gives: 'cats',
+    create: (api) => {
+      t.ok(api.dogs, 'api provides the needed dep')
+      return () => true 
+    }
+  }
 
+  const dogs = {
+    needs: {cats: 'first'},
+    gives: 'dogs',
+    create: (api) => {
+      t.ok(api.cats, 'api provides the needed dep')
+      return () => true 
+    }
+  }
+  var api = Combine([cats, dogs])
+  t.ok(api.cats && api.dogs, 'Combine returns an object with keys that match the keys given by all the modules')
   t.end()
 })
 
 test('a module depends on itself', function(t) {
+  const factorial = {
+    needs: {factorial: 'first'},
+    gives: 'factorial',
+    create: (api) => {
+      t.ok(api.factorial, 'api provides the needed dep')
+      return (num) => {
+        if(num === 1) return 1
+        else return num * api.factorial(num - 1) 
+      }
+    }
+  }
 
+  var api = Combine([factorial])
+  t.ok(api.factorial, 'Combine returns an object with keys that match the keys given by all the modules')
+  t.equal(api.factorial[0](4), 24)
   t.end()
 })
 
-test('needs must use either first or map', function(t) {
+test('throws if need type is not first, map or reduce', function(t) {
 
   const cats = {
     gives: 'cats',
@@ -96,31 +138,50 @@ test('needs must use either first or map', function(t) {
   const client = {
     needs: {cats: 'nope'},
     gives: 'client',
-    create: (modules) => {
-      t.ok(modules.cats, 'create is called with object that has keys given by other modules')
+    create: (api) => {
+      t.ok(api.cats, 'create is called with object that has keys given by other modules')
       return () => {client: () => cats.cats()}
     } 
   }
 
-  var modules = t.throws(() => Combine([client, cats]))
+  t.throws(() => Combine([client, cats]))
 
   client.needs.cats = 'first'
-  var modules = Combine([client, cats])
-  t.ok(modules, 'needs first is ok')
+  var api = Combine([client, cats])
+  t.ok(api, 'needs first is ok')
 
   client.needs.cats = 'map'
-  var modules = Combine([client, cats])
-  t.ok(modules, 'needs map is ok')
+  var api = Combine([client, cats])
+  t.ok(api, 'needs map is ok')
+
+  client.needs.cats = 'reduce'
+  var api = Combine([client, cats])
+  t.ok(api, 'needs reduce is ok')
+  
+  t.end()
+})
+
+test('when a module needs a map of dependencies it receives an array of all the modules', function(t) {
 
   t.end()
 })
 
-test('when a module needs a map of dependencies it recieves an array of all the modules', function(t) {
+test('when a module needs the first of dependencies it receives the first module to return a value', function(t) {
 
   t.end()
 })
 
-test('when a module needs the first of dependencies it recieves the first module to return a value', function(t) {
+test('when a module needs the reduce of dependencies it receives the result of applying all', function(t) {
+
+  t.end()
+})
+
+test('a module can give multiple exports', function(t) {
+
+  t.end()
+})
+
+test('a module can need multiple imports', function(t) {
 
   t.end()
 })
