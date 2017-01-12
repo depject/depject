@@ -1,4 +1,4 @@
-# depject [![NPM version](https://badge.fury.io/js/depject.svg)](https://npmjs.org/package/depject) [![Build Status](https://travis-ci.org/dominictarr/depject.svg?branch=master)](https://travis-ci.org/dominictarr/depject)
+# depject 
 
 > simplest dependency injection
 
@@ -64,8 +64,6 @@ Each module is an object which exposes `{needs, gives, create}' properties. 'nee
 
 `needs` Is a string name of it's export, or if there are multiple exports an object where each key is a name {<name>: true,...}. 
 
-`gives` Is a string name of it's export, or if there are multiple exports an object where each key is a name {<name>: true,...}. 
-
 `create` Is a function that is called with an object connected to modules which provide the `needs` and must return a value which provides the `gives` or an object with keys that match what the module `gives`.
 
 `combine` Takes an array of objects that have the keys `create` (mandatory), `gives` (optional) and `needs` (optional).
@@ -94,7 +92,7 @@ Takes an array of modules, resolves dependencies and injects them into each modu
 
 ## graphs!
 
-Once you have assembled the modules, you may also generate a `.dot` file of the
+once you have assembled the modules, you may also generate a `.dot` file of the
 module graph, which can be interesting too look at.
 
 ``` js
