@@ -66,26 +66,26 @@ We might want to allow other modules to decorate the value given by our module
 const combine = require('depject')
 
 const cats = {
-  gives: 'speak',
-  create: () => (type) => type === 'cat' ? 'Meow' : undefined 
+  gives: 'speakType',
+  create: () => (type) => type === 'cat' ? 'Meow' : null 
 }
 
 const dogs = {
+  gives: 'speakType',
+  create: () => (type) => type === 'dog' ? 'Woof' : null 
+}
+
+const speak = {
+  needs: {speakType: 'first'},
   gives: 'speak',
-  create: () => (type) => type === 'dog' ? 'Woof' : undefined 
+  create: (api) => api.speakType
 }
 
-const animals = {
-  needs: {speak: 'first'},
-  gives: 'animals',
-  create: (modules) => () => () => modules.speak("dog")
-}
+const combined = combine([cats, dogs, speak])
 
-var combined = combine([cats, dogs, animals])
+const mySpeak = combined.speak[0]
 
-var myAnimals = combined.animals[0]()
-
-console.log(myAnimals())
+console.log(mySpeak('dog'))
 //Woof
 ```
 
@@ -95,24 +95,24 @@ console.log(myAnimals())
 const combine = require('depject')
 
 const cats = {
-  gives: 'names',
+  gives: 'name',
   create: () => () => 'Fluffy' 
 }
 
 const dogs = {
-  gives: 'names',
+  gives: 'name',
   create: () => () => 'Rex' 
 }
 
 const animals = {
-  needs: {names: 'map'},
+  needs: {name: 'map'},
   gives: 'animals',
-  create: (modules) => () => () => modules.names()
+  create: (api) => api.name
 }
 
 var combined = combine([cats, dogs, animals])
 
-var myAnimals = combined.animals[0]()
+var myAnimals = combined.animals[0]
 
 console.log(myAnimals())
 //['Fluffy', 'Rex']
