@@ -183,6 +183,43 @@ test('when a module needs a map of dependencies it receives an array of all the 
 
 test('when a module needs the first of dependencies it receives the first module to return a value', function(t) {
 
+  const a = {
+    needs: {ideas: 'first'},
+    gives: 'a',
+    create: (api) => api.ideas
+  }
+  const b = {
+    gives: 'ideas',
+    create: () => () => null 
+  }
+  const c = {
+    gives: 'ideas',
+    create: () => () => 'swim' 
+  }
+
+  var api = Combine([a, b, c])
+  t.equal(api.a[0](), 'swim')
+  t.end()
+})
+
+test('when a module needs the first of dependencies it receives the first module to return a value. Depends on order passed to combine', function(t) {
+
+  const a = {
+    needs: {ideas: 'first'},
+    gives: 'a',
+    create: (api) => api.ideas
+  }
+  const b = {
+    gives: 'ideas',
+    create: () => () => 'sink' 
+  }
+  const c = {
+    gives: 'ideas',
+    create: () => () => 'swim' 
+  }
+
+  var api = Combine([a, b, c])
+  t.equal(api.a[0](), 'sink')
   t.end()
 })
 
