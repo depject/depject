@@ -60,9 +60,11 @@ We might want to allow other modules to decorate the value given by our module
 
 ## api
 
-Each module is an object which exposes `{needs, gives, create}' properties. 'needs' and 'gives' describe the module features that this module requires, and exports.
+Each module is an object which exposes `{needs, gives, create}` properties. `needs` and `gives` describe the module features that this module requires, and exports.
 
-`needs` Is a string name of it's export, or if there are multiple exports an object where each key is a name {<name>: true,...}. 
+`needs` is a map of names to types. `{<name> : "map"|"first"|"reduce"}`
+
+`gives` Is a string name of it's export, or if there are multiple exports an object where each key is a name {<name>: true,...}. 
 
 `create` Is a function that is called with an object connected to modules which provide the `needs` and must return a value which provides the `gives` or an object with keys that match what the module `gives`.
 
