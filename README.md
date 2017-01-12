@@ -82,11 +82,12 @@ This will return an array object of arrays of exports.
 ### design questions
 
 Should `combine` have a way to specify the public interface?
+
 Should there be a way to create a routed plugin?
 i.e. check a field and call a specific plugin directly?
-How does this interact with interfaces provided remotely,
-i.e. muxrpc?
 
+How does this interact with interfaces provided remotely?
+i.e. muxrpc?
 
 ## graphs!
 
