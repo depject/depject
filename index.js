@@ -48,12 +48,14 @@ function append(obj, path, value) {
 module.exports = function combine () {
   //iterate over array, and collect new plugs which are satisfyable.
 
-  var modules = {}
-  ;[].slice.call(arguments).forEach(function (moduleSet) {
-    eachModule(moduleSet, function (value, path) {
-      modules[path.join('/')] = value
+  var modules = [].slice.call(arguments).reduce(function (a, b) {
+    eachModule(b, function (value, path) {
+      var k = path.join('/')
+      if(!value) delete a[k]
+      else       a[k] = value
     })
-  })
+    return a
+  }, {})
 
   var allNeeds = {}, allGives = {}
   for (var k in modules) {
@@ -131,5 +133,7 @@ function eachModule (obj, iter, _a) {
       if(isModule(obj[k])) iter(obj[k], _a.concat(k))
       else eachModule(obj[k], iter, _a.concat(k))
     }
+    // falsy overrides modules
+    else if (!obj[k]) iter(obj[k], _a.concat(k))
   }
 }
