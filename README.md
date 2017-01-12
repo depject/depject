@@ -66,7 +66,7 @@ Each module is an object which exposes `{needs, gives, create}` properties. `nee
 
 `needs` is a map of names to types. `{<name> : "map"|"first"|"reduce"}`
 
-`gives` Is a string name of it's export, or if there are multiple exports an object where each key is a name {<name>: true,...}. 
+`gives` Is a string name of it's export, or if there are multiple exports an object where each key is a name `{<name>: true,...}`. 
 
 `create` Is a function that is called with an object connected to modules which provide the `needs` and must return a value which provides the `gives` or an object with keys that match what the module `gives`.
 
