@@ -1,3 +1,5 @@
+var N = require('libnested')
+
 function isFunction (f) {
   return 'function' === typeof f
 }
@@ -6,8 +8,12 @@ function isObject (o) {
   return o && 'object' === typeof o
 }
 
+function isTrue (b) {
+  return b === true
+}
+
 function isGives (o) {
-  return isString(o) || isAll(o, isGives)
+  return isString(o) || N.each(o, isTrue)
 }
 
 function isAll (o, test) {
@@ -17,13 +23,11 @@ function isAll (o, test) {
 }
 
 function isType (t) {
-  return ({map: true, filter: true, reduce: true})[t]
+  return ({map: true, first: true, reduce: true})[t]
 }
 
 function isNeeds (n) {
-  return isObject(n) && isAll(n, function (s) {
-    return isType(s) || isNeeds(n)
-  })
+  return N.each(n, isType)
 }
 
 function isModule (m) {
