@@ -1,55 +1,126 @@
-var apply = require('../apply')
-
-var hello = require('../examples/hello')
 var Combine = require('../')
-var tape = require('tape')
+var test = require('tape')
 
-tape('simple', function (t) {
-  t.equal(Combine([hello.hi, hello.greet]).hello[0]('depject'), 'Hello, depject')
-  t.equal(Combine([hello.hi, hello.capitalize, hello.greet]).hello[0]('depject'), 'Hello, DEPJECT')
+test('combine is a function', function(t) {
+  t.equal(typeof Combine, 'function')
+  t.end()
+})
+
+test('combine one module', function(t) {
+  t.plan(3)
+  theCats = ['fluffy']
+
+  const cats = {
+    gives: 'cats',
+    create: () => {
+      t.ok(true, 'create is called')
+      return (_cats) => { return {cats: () => _cats}}
+    }
+  }
+
+  var modules = Combine([cats])
+  
+  t.ok(modules.cats, 'Combine returns an object with keys that match the keys given by all the modules')
+  t.deepEqual(modules.cats[0](theCats).cats(), theCats, 'can depend on one module')
+})
+
+test('combine two modules', function(t) {
+  t.plan(5)
+  theCats = ['fluffy']
+  theClient = ['client']
+
+  const cats = {
+    gives: 'cats',
+    create: () => {
+      t.ok(true, 'create is called')
+      return (_cats) => {return {cats: id => _cats}}
+    }
+  }
+
+  const client = {
+    needs: {cats: 'first'},
+    gives: 'client',
+    create: (modules) => {
+      t.ok(modules.cats, 'create is called with object that has keys given by other modules')
+      return (_client) => {return {client: () => _client}}
+    } 
+  }
+
+  var modules = Combine([client, cats])
+  
+  t.ok(modules.cats && modules.client, 'Combine returns an object with keys that match the keys given by all the modules')
+  t.deepEqual(modules.cats[0](theCats).cats(), theCats, 'can depend on module one')
+  t.deepEqual(modules.client[0](theClient).client(), theClient, 'can depend on module two')
+})
+
+test('combine takes an array of modules and throws if not an array', function(t) {
+
+  t.plan(1)
+
+  const cats = {
+    gives: 'cats',
+    create: () => {
+      t.ok(true, 'create is called')
+      return () => {cats: id => _cats}
+    }
+  }
+
+  var modules = t.throws(() => Combine(cats))
+})
+
+test('one module depends on a module that depends on another', function(t) {
 
   t.end()
 })
 
-tape('entry', function (t) {
-  console.log(Combine([hello.hi, hello.greet]).hello)
-  t.equal(apply.first(Combine([hello.hi, hello.greet]).hello)('depject'), 'Hello, depject')
-  t.equal(apply.first(Combine([hello.hi, hello.capitalize, hello.greet]).hello)('depject'), 'Hello, DEPJECT')
+test('two modules depend on each other', function(t) {
 
   t.end()
 })
 
-
-var isModule = require('../is')
-
-tape('isModule', function (t) {
-
-  t.notOk(isModule(hello))
-  for(var k in hello)
-    t.ok(isModule(hello[k]))
-  t.end()
-
-})
-
-
-tape('from object', function (t) {
-  t.equal(apply.first(Combine(
-      {hi: hello.hi},
-      {capitalize: hello.capitalize, greet: hello.greet}
-   ).hello)('depject'), 'Hello, DEPJECT')
+test('a module depends on itself', function(t) {
 
   t.end()
 })
 
+test('needs must use either first or map', function(t) {
 
-tape('from object2', function (t) {
-  t.equal(apply.first(Combine(
-      hello,
-      {capitalize: false}
-   ).hello)('depject'), 'Hello, depject')
+  const cats = {
+    gives: 'cats',
+    create: () => {
+      t.ok(true, 'create is called')
+      return () => {cats: id => _cats}
+    }
+  }
+
+  const client = {
+    needs: {cats: 'nope'},
+    gives: 'client',
+    create: (modules) => {
+      t.ok(modules.cats, 'create is called with object that has keys given by other modules')
+      return () => {client: () => cats.cats()}
+    } 
+  }
+
+  var modules = t.throws(() => Combine([client, cats]))
+
+  client.needs.cats = 'first'
+  var modules = Combine([client, cats])
+  t.ok(modules, 'needs first is ok')
+
+  client.needs.cats = 'map'
+  var modules = Combine([client, cats])
+  t.ok(modules, 'needs map is ok')
 
   t.end()
 })
 
+test('when a module needs a map of dependencies it recieves an array of all the modules', function(t) {
 
+  t.end()
+})
 
+test('when a module needs the first of dependencies it recieves the first module to return a value', function(t) {
+
+  t.end()
+})
