@@ -60,6 +60,8 @@ We might want to allow other modules to decorate the value given by our module
 
 ## api
 
+### modules
+
 Each module is an object which exposes `{needs, gives, create}` properties. `needs` and `gives` describe the module features that this module requires, and exports.
 
 `needs` is a map of names to types. `{<name> : "map"|"first"|"reduce"}`
@@ -68,15 +70,14 @@ Each module is an object which exposes `{needs, gives, create}` properties. `nee
 
 `create` Is a function that is called with an object connected to modules which provide the `needs` and must return a value which provides the `gives` or an object with keys that match what the module `gives`.
 
-`combine` Takes an array of objects that have the keys `create` (mandatory), `gives` (optional) and `needs` (optional).
-
 ### combine
 
 Actually connect all the modules together!
+Takes an array of modules, resolves dependencies and injects them into each module. 
 
 `combine([modules...])`
 
-This will return an array object of arrays of plugs.
+This will return an array object of arrays of exports.
 
 ### design questions
 
@@ -86,11 +87,6 @@ i.e. check a field and call a specific plugin directly?
 How does this interact with interfaces provided remotely,
 i.e. muxrpc?
 
-## api
-
-### combine ([modules...])
-
-Takes an array of modules, resolves dependencies and injects them into each module. 
 
 ## graphs!
 
