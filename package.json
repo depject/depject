@@ -9,11 +9,6 @@
     "url": "https://github.com/dominictarr/depject/issues"
   },
   "license": "MIT",
-  "files": [
-    "index.js",
-    "apply",
-    "contributing.md"
-  ],
   "main": "index.js",
   "engines": {
     "node": ">=4"
@@ -26,8 +21,5 @@
   },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"
-  },
-  "keywords": [
-    "generategenerator"
-  ]
+  }
 }
