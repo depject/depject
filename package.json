@@ -3,9 +3,15 @@
   "description": "simplest dependency injection",
   "version": "3.0.0",
   "homepage": "https://github.com/dominictarr/depject",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/dominictarr/depject.git"
+  "author": "Dominic Tarr (http://dominictarr.com)",
+  "repository": "dominictarr/depject",
+  "bugs": {
+    "url": "https://github.com/dominictarr/depject/issues"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "engines": {
+    "node": ">=4"
   },
   "dependencies": {
     "libnested": "^1.1.0"
@@ -15,7 +21,5 @@
   },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"
-  },
-  "author": "Dominic Tarr <dominic.tarr@gmail.com> (http://dominictarr.com)",
-  "license": "MIT"
+  }
 }
