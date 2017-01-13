@@ -145,6 +145,65 @@ Takes an array of modules, resolves dependencies and injects them into each modu
 
 This will return an array object of arrays of exports.
 
+## exporting more than one thing from a module
+
+```js
+const cats = {
+  gives: {name: true, animalSound: true},
+  create: () => ({
+    name: () => 'Fluffy',
+    animalSound: () => {
+      if(type !== 'cat') return
+      return 'Meow' 
+    }
+  }) 
+} 
+```
+
+## requiring more than one thing into a module
+
+```js
+const animalSounds = {
+  needs: {name: 'map', animalSound: 'first'}
+} 
+```
+
+## deeply nested modules
+
+It's possible to pass deeply nested modules to combine eg:
+
+```js
+const modules = {
+  a: {
+    b: {
+      c: {
+        gives: 'yes',
+        create: function () {
+          return function () {
+            return true
+          }
+        }
+      }
+    },
+    d: {
+      e: {
+        needs: {
+          yes: 'first'
+        },
+        gives: 'no',
+        create: function (api) {
+          return function () {
+            return !api.yes()
+          }
+        }
+      }
+    }
+  }
+}
+
+const api = combine(modules)
+```
+
 ### design questions
 
 Should `combine` have a way to specify the public interface?
