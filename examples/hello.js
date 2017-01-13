@@ -23,7 +23,7 @@ var greet = {
   gives: 'decorate',
   create: function () {
     return function (name) {
-      return 'Hello, '+name
+      return 'Hello, ' + name
     }
   }
 }
@@ -32,7 +32,7 @@ module.exports = {
   hi: hi, capitalize: capitalize, greet: greet
 }
 
-if(!module.parent) {
+if (!module.parent) {
   console.log(combine([hi, capitalize, greet]).hello[0]('dominic'))
 }
 

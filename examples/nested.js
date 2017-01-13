@@ -17,7 +17,5 @@ var image = {
   }
 }
 
-
 combine([blobs, image]).start[0]('hello')
-
 

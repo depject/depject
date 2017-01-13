@@ -1,9 +1,9 @@
 function isFunction (f) {
-  return 'function' === typeof f
+  return typeof f === 'function'
 }
 
 function isObject (o) {
-  return o && 'object' === typeof o
+  return o && typeof o === 'object'
 }
 
 function isGives (o) {
@@ -11,8 +11,9 @@ function isGives (o) {
 }
 
 function isAll (o, test) {
-  for(var k in o)
-    if(!test(o[k])) return false
+  for (var k in o) {
+    if (!test(o[k])) return false
+  }
   return true
 }
 
@@ -31,12 +32,7 @@ function isModule (m) {
 }
 
 function isString (s) {
-  return 'string' === typeof s
-}
-
-function isEmpty (e) {
-  for(var k in e) return false
-  return true
+  return typeof s === 'string'
 }
 
 module.exports = isModule
