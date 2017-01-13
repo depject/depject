@@ -315,7 +315,6 @@ test('reduce throws an error when no functions are provided to reduce', function
 
 test('first throws an error when no functions are provided to take first', function(t) {
   const a = {
-    gives: 'a',
     needs: {ideas: 'first'},
     create: (api) => api.ideas() 
   }
@@ -335,5 +334,13 @@ test('combine throws an error when module does not have a create function', func
 
 test('combine throws an error when not passed anything', function (t) {
   t.throws(() => Combine(), /could not resolve any modules/)
+  t.end()
+})
+
+test('combine throws an error when passed a module with a create but no gives', function (t) {
+  const a = {
+    create: (api) => () => true 
+  }
+  t.throws(() => Combine([a]), /could not resolve any modules/)
   t.end()
 })
