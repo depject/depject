@@ -145,6 +145,26 @@ Takes an array of modules, resolves dependencies and injects them into each modu
 
 This will return an array object of arrays of exports.
 
+## exporting more than one thing from a module
+```js
+ const cats = {
+  gives: {name: true, animalSound: true},
+  create: () => ({
+    name: () => 'Fluffy',
+    animalSound: () => {
+      if(type !== 'cat') return
+      return 'Meow' 
+    }
+  }) 
+} 
+## requiring more than one thing into a module
+```js
+ const animalSounds = {
+  needs: {name: 'map', animalSound: 'first'},
+  //...
+} 
+```
+
 ### design questions
 
 Should `combine` have a way to specify the public interface?
