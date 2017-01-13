@@ -272,3 +272,57 @@ test('a module can need multiple imports', function (t) {
   t.equal(api.a[0](), 'ideathought')
   t.end()
 })
+
+test('throws an error when a needed module is not given', function(t) {
+  const a = {
+    needs: {ideas: 'first'},
+    create: (api) => api.b 
+  }
+  t.throws(() => Combine([a]), /export needed but not given/)
+  t.end()
+})
+
+test('map throws an error when no functions are provided to map', function(t) {
+  const a = {
+    gives: 'a',
+    needs: {ideas: 'map'},
+    create: (api) => api.ideas() 
+  }
+  const b = {
+    gives: 'ideas',
+    create: (api) => null 
+  }
+  t.throws( () => Combine([a, b]))
+
+  t.end()
+})
+
+test('reduce throws an error when no functions are provided to reduce', function(t) {
+  const a = {
+    gives: 'a',
+    needs: {ideas: 'reduce'},
+    create: (api) => api.ideas() 
+  }
+  const b = {
+    gives: 'ideas',
+    create: (api) => null 
+  }
+  t.throws( () => Combine([a, b]))
+
+  t.end()
+})
+
+test('first throws an error when no functions are provided to take first', function(t) {
+  const a = {
+    gives: 'a',
+    needs: {ideas: 'first'},
+    create: (api) => api.ideas() 
+  }
+  const b = {
+    gives: 'ideas',
+    create: (api) => null 
+  }
+  t.throws( () => Combine([a, b]))
+
+  t.end()
+})

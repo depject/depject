@@ -63,7 +63,7 @@ module.exports = function combine () {
   }
 
   N.each(allNeeds, function (_, path) {
-    if (!N.get(allGives, path)) { console.log('MISSING', path) }
+    if (!N.get(allGives, path)) { throw new Error('export needed but not given' + path.join('.') + ' in: ' + path) }
   })
 
 //  console.log("NEEDS", allNeeds)
