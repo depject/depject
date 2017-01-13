@@ -87,11 +87,10 @@ module.exports = function combine () {
         return apply[type](a)
       })
 
+      if(!isFunction(module.create)){throw new Error('did not have a create function', key)}
       // create module, and get function(s) it returns.
-      if (!isFunction(module.create)) {
-        throw new Error('module:' + key + ' did not have a create function')
-      }
       var exported = module.create(m)
+      if(!exported) {throw new Error('export declared but not returned for', key)}
 
       // for the functions it declares, merge these into newSockets
       if (isString(module.gives)) {
@@ -99,7 +98,6 @@ module.exports = function combine () {
       } else {
         N.each(module.gives, function (_, path) {
           var fun = N.get(exported, path)
-          if (!isFunction(fun)) { throw new Error('export declared but not returned' + path.join('.') + ' in:' + key) }
           append(newSockets, path, fun)
         })
       }

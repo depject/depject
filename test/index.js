@@ -75,7 +75,7 @@ test('one module depends on a module that depends on another', function (t) {
     create: () => () => true
   }
 
-  var api = Combine([a, b, c])
+  var api = Combine([a, c, b])
   t.ok(api.a[0]())
   t.end()
 })
@@ -342,5 +342,23 @@ test('combine throws an error when passed a module with a create but no gives', 
     create: (api) => () => true 
   }
   t.throws(() => Combine([a]), /could not resolve any modules/)
+  t.end()
+})
+
+test('combine throws an error when passed a module with a create when gives a string', function (t) {
+  const a = {
+    gives: 'nope',
+    create: (api) => {} 
+  }
+  t.throws(() => Combine([a]), /export declared but not returned/)
+  t.end()
+})
+
+test('combine throws an error when passed a module with a create when gives is an object', function (t) {
+  const a = {
+    gives: {nope: true},
+    create: (api) => {} 
+  }
+  t.throws(() => Combine([a]), /export declared but not returned/)
   t.end()
 })
