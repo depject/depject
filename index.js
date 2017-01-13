@@ -106,7 +106,7 @@ module.exports = function combine () {
     })
 
     if (isEmpty(newSockets)) {
-      throw new Error('could not resolve all modules')
+      throw new Error('could not resolve any modules')
     } else {
       N.each(newSockets, function (_ary, path) {
         var ary = N.get(sockets, path) || N.set(sockets, path, [])

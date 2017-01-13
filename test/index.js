@@ -6,6 +6,7 @@ test('combine is a function', function (t) {
   t.end()
 })
 
+
 test('combine one module', function (t) {
   const cats = {
     gives: 'cats',
@@ -292,7 +293,7 @@ test('map throws an error when no functions are provided to map', function(t) {
     gives: 'ideas',
     create: (api) => null 
   }
-  t.throws( () => Combine([a, b]))
+  t.throws( () => Combine([a, b]), /no functions available/)
 
   t.end()
 })
@@ -307,7 +308,7 @@ test('reduce throws an error when no functions are provided to reduce', function
     gives: 'ideas',
     create: (api) => null 
   }
-  t.throws( () => Combine([a, b]))
+  t.throws( () => Combine([a, b]), /no functions available/)
 
   t.end()
 })
@@ -322,7 +323,17 @@ test('first throws an error when no functions are provided to take first', funct
     gives: 'ideas',
     create: (api) => null 
   }
-  t.throws( () => Combine([a, b]))
+  t.throws( () => Combine([a, b]), /no functions available/)
 
+  t.end()
+})
+
+test('combine throws an error when module does not have a create function', function (t) {
+  t.throws(() => Combine([{}]), /did not have a create function/)
+  t.end()
+})
+
+test('combine throws an error when not passed anything', function (t) {
+  t.throws(() => Combine(), /could not resolve any modules/)
   t.end()
 })
