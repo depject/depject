@@ -1,36 +1,138 @@
 var N = require('libnested')
 
-function hasAll(set, keys) {
-  return keys.every(function (k) {
-    return !!set[k]
-  })
-}
-
-function isString (s) {
-  return 'string' === typeof s
-}
-
-function isEmpty (e) {
-  for(var k in e) return false
-  return true
-}
-
-function isFunction (f) {
-  return 'function' === typeof f
-}
-
 var isArray = Array.isArray
 
 var apply = require('./apply')
 
-function filter(modules, fn) {
-  if(Array.isArray(modules))
-    return modules.filter(fn)
-  var o = {}
-    for(var k in modules)
-      if(fn(modules[k], k, modules))
-        o[k] = modules[k]
-  return o
+module.exports = function combine () {
+  var modules = getModules([].slice.call(arguments))
+
+  var allNeeds = getAllNeeds(modules)
+  var allGives = getAllGives(modules)
+
+  var missing = getNeedsNotGiven(allNeeds, allGives)
+
+  missing.forEach(function (path) {
+    console.log('MISSING', path)
+  })
+
+  var deps = getDependencyOrder(modules, allGives)
+  console.log('deps', deps)
+
+  var sockets = {}
+
+  for (var i = 0; i < deps.length; i++) {
+    var module = deps[i]
+    var key = module.key
+    // collect the functions that this module needs
+    var imports = resolveNeeds(sockets, module)
+    // create module, and get function(s) it returns.
+    if(!isFunction(module.create))
+      throw new Error('module:'+key + ' did not have a create function')
+    var exported = module.create(imports)
+
+    // for the functions it declares, merge these into newSockets
+    if(isString(module.gives))
+      append(sockets, [module.gives], exported)
+    else
+      N.each(module.gives, function (_, path) {
+        var fun = N.get(exported, path)
+        if(!isFunction(fun))
+          throw new Error('export declared but not returned '+path.join('.') + ' in:'+key)
+        append(sockets, path, fun)
+      })
+  }
+
+  return sockets
+}
+
+function getModules (moduleSets) {
+  return moduleSets.reduce(function (a, b) {
+    for(var k in b)
+      if(!b[k]) delete a[k]
+      else {
+        a[k] = b[k]
+        // save key to module
+        a[k].key = k
+      }
+    return a
+  }, {})
+}
+
+
+function getAllNeeds (modules) {
+  var allNeeds = {}
+  for (var k in modules) {
+    var module = modules[k]
+    N.each(module.needs, function (v, path) {
+      append(allNeeds, path, module)
+    })
+  }
+  return allNeeds
+}
+
+function getAllGives (modules) {
+  var allGives = {}
+  for (var k in modules) {
+    var module = modules[k]
+    if(isString(module.gives))
+      append(allGives, [module.gives], module)
+    else
+      N.each(module.gives, function (v, path) {
+        append(allGives, path, module)
+      })
+  }
+  return allGives
+}
+
+function getNeedsNotGiven (allNeeds, allGives) {
+  // check every need is given
+  var missing = []
+  N.each(allNeeds, function (_, path) {
+    if(!N.get(allGives, path))
+      missing.push(path)
+  })
+  return missing
+}
+
+function getDependencyOrder (modules, allGives) {
+  var resolved = []
+  var unresolved = []
+  for (var k in modules) {
+    var module = modules[k]
+    resolveDependencyOrder(module, allGives, resolved, unresolved)
+  }
+  return resolved
+}
+
+function resolveDependencyOrder (module, allGives, resolved, unresolved) {
+  unresolved.push(module)
+  N.each(module.needs, function (v, path) {
+    var deps = N.get(allGives, path)
+    for (var i = 0; i < deps.length; i++) {
+      var dep = deps[i]
+      // if circular dependency (we've seen it before)
+      if (unresolved.indexOf(dep) !== -1)
+        console.log('circular dependency:', module, dep)
+      else
+        resolveDependencyOrder(dep, allGives, resolved, unresolved)
+    }
+  })
+  // don't add same dependency twice
+  if (resolved.indexOf(module) === -1)
+    resolved.push(module)
+  unresolved.splice(unresolved.indexOf(module), 1)
+}
+
+
+// collect the functions that this module needs.
+function resolveNeeds (sockets, module) {
+  return N.map(module.needs, function (type, path) {
+    var a = N.get(sockets, path)
+    if(!a)
+      a = N.set(sockets, path, [])
+    return apply[type](a)
+  })
 }
 
 function append(obj, path, value) {
@@ -39,82 +141,12 @@ function append(obj, path, value) {
   a.push(value)
 }
 
-module.exports = function combine () {
-  //iterate over array, and collect new plugs which are satisfyable.
+function isString (s) {
+  return 'string' === typeof s
+}
 
-  var modules = [].slice.call(arguments).reduce(function (a, b) {
-    for(var k in b)
-      if(!b[k]) delete a[k]
-      else      a[k] = b[k]
-    return a
-  }, {})
 
-  var allNeeds = {}, allGives = {}
-  for (var k in modules) {
-    var module = modules[k]
-    N.each(module.needs, function (v, path) {
-      N.set(allNeeds, path, true)
-    })
-    if(isString(module.gives))
-      N.set(allGives, [module.gives], true)
-    else
-      N.each(module.gives, function (v, path) {
-        N.set(allGives, path, true)
-      })
-  }
-
-  N.each(allNeeds, function (_, path) {
-    if(!N.get(allGives, path))
-      console.log('MISSING', path)
-  })
-
-//  console.log("NEEDS", allNeeds)
-//  console.log("GIVES", allGives)
-
-  //okay, instead of iterating over everything, in dependency order.
-  //just create things in order added?
-
-  var sockets = {}
-  while (true) {
-    var newSockets = {}
-    //filter modules that have not been resolved yet.
-    modules = filter(modules, function (module, key) {
-      //if this module cannot be resolved yet, keep it for next time.
-      //collect the functions that this module needs.
-      var m = N.map(module.needs, function (type, path) {
-          var a = N.get(sockets, path)
-          if(!a)
-            a = N.set(sockets, path, [])
-          return apply[type](a)
-        })
-
-      //create module, and get function(s) it returns.
-      if(!isFunction(module.create))
-        throw new Error('module:'+key + ' did not have a create function')
-      var exported = module.create(m)
-
-      //for the functions it declares, merge these into newSockets
-      if(isString(module.gives))
-        append(newSockets, [module.gives], exported)
-      else
-        N.each(module.gives, function (_, path) {
-          var fun = N.get(exported, path)
-          if(!isFunction(fun))
-            throw new Error('export declared but not returned'+path.join('.') + ' in:'+key)
-          append(newSockets, path, fun)
-        })
-    })
-
-    if(isEmpty(newSockets)) {
-      throw new Error('could not resolve all modules')
-    }
-    else
-      N.each(newSockets, function (_ary, path) {
-        var ary = N.get(sockets, path) || N.set(sockets, path, [])
-        _ary.forEach(function (e) { ary.push(e) })
-      })
-    if(isEmpty(modules))
-      return sockets
-  }
+function isFunction (f) {
+  return 'function' === typeof f
 }
 
