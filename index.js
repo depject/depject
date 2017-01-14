@@ -2,12 +2,6 @@ var N = require('libnested')
 
 var isModule = require('./is')
 
-function hasAll(set, keys) {
-  return keys.every(function (k) {
-    return !!set[k]
-  })
-}
-
 function isString (s) {
   return typeof s === 'string'
 }
@@ -54,8 +48,10 @@ module.exports = function combine () {
   var modules = [].slice.call(arguments).reduce(function (a, b) {
     eachModule(b, function (value, path) {
       var k = path.join('/')
-      if(!value) delete a[k]
-      else       a[k] = value
+      if(!value) 
+        delete a[k]
+      else 
+        a[k] = value
     })
     return a
   }, {})
@@ -78,14 +74,9 @@ module.exports = function combine () {
   }
 
   N.each(allNeeds, function (_, path) {
-    if (!N.get(allGives, path)) { throw new Error('export needed but not given' + path.join('.') + ' in: ' + path) }
+    if (!N.get(allGives, path)) { throw new Error('export needed but not given ' + path.join('.') + ' in: ' + path) }
   })
 
-//  console.log("NEEDS", allNeeds)
-//  console.log("GIVES", allGives)
-
-  // okay, instead of iterating over everything, in dependency order.
-  // just create things in order added?
 
   var sockets = {}
   while (true) {
@@ -134,10 +125,13 @@ function eachModule (obj, iter, _a) {
   _a = _a || []
   for(var k in obj) {
     if(isObject(obj[k])) {
-      if(isModule(obj[k])) iter(obj[k], _a.concat(k))
-      else eachModule(obj[k], iter, _a.concat(k))
+      if(isModule(obj[k]))
+        iter(obj[k], _a.concat(k))
+      else 
+        eachModule(obj[k], iter, _a.concat(k))
     }
     // falsy overrides modules
-    else if (!obj[k]) iter(obj[k], _a.concat(k))
+    else if (!obj[k])
+      iter(obj[k], _a.concat(k))
   }
 }
