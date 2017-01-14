@@ -1,21 +1,32 @@
 {
   "name": "depject",
   "description": "simplest dependency injection",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "homepage": "https://github.com/dominictarr/depject",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/dominictarr/depject.git"
+  "author": "Dominic Tarr (http://dominictarr.com)",
+  "repository": "dominictarr/depject",
+  "bugs": {
+    "url": "https://github.com/dominictarr/depject/issues"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "engines": {
+    "node": ">=4"
   },
   "dependencies": {
     "libnested": "^1.1.0"
   },
   "devDependencies": {
+    "dependency-check": "^2.7.0",
+    "istanbul": "^0.4.5",
+    "standard": "^8.6.0",
     "tape": "^4.6.2"
   },
   "scripts": {
-    "test": "set -e; for t in test/*.js; do node $t; done"
-  },
-  "author": "Dominic Tarr <dominic.tarr@gmail.com> (http://dominictarr.com)",
-  "license": "MIT"
+    "test": "npm run test:node && npm run test:deps && npm run test:lint",
+    "test:node": "set -e; for t in test/*.js; do node $t; done",
+    "test:lint": "standard",
+    "test:deps": "dependency-check . && dependency-check . --extra --no-dev",
+    "test:coverage": "NODE_ENV=test istanbul cover test"
+  }
 }

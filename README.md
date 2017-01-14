@@ -1,8 +1,14 @@
-# depject
+# depject 
 
-minimal dependency injection
+> simplest dependency injection
 
-## module api
+## Installation
+
+```sh
+$ npm install --save depject
+```
+
+## philosophy 
 
 A module exposes features to be used by other modules,
 and may also depend on features provided by other modules.
@@ -45,88 +51,169 @@ We want to call all the renderers, and get the first one that knows how to handl
 
 ### map - get each module's opinion about a thing.
 
-say we have a menu that is actions which may be performed on a thing.
+Say we have a menu that is actions which may be performed on a thing.
 We map the modules over that thing, and add all returned items to a menu.
 
+### reduce - compose each modules opinion about a thing into one opinion.
 
-## api
-
-Each module is an object which exposes `{needs, gives, create}` properties.
-`needs` and `gives` describe the module features that this module requires,
-and exports.
-
-`gives` is a sting name of it's export, or if there are multiple exports,
-and object where each key is a name `{<name>: true,...}`.
-
-`needs` is a map of names to types. `{<name> : "map"|"first"}`
-the type determins how the modules returned values are handled.
-If it's `'first'` then the first non null value is returned.
-if it's `'map'` then an array of values is returned.
-
-`create` is a function that is called with an object connected to modules which provide
-the `needs` and must return a value which provides the `gives`. 
-
-### combine
-
-actually connect all the modules together!
-
-`combine([modules...])`
-
-this will return an array object of arrays of plugs.
-
-### design questions
-
-should `combine` have a way to specify the public interface?
-should there be a way to create a routed plugin?
-i.e. check a field and call a specific plugin directly?
-how does this interact with interfaces provided remotely,
-i.e. muxrpc?
+We might want to allow other modules to decorate the value given by our module
 
 ## example
 
+### Using `first`
+
+```js
+const combine = require('depject')
+
+const cats = {
+  gives: 'animalSound',
+  create: () => (type) => {
+    if(type !== 'cat') return
+    return 'Meow' 
+  }
+}
+
+const dogs = {
+  gives: 'animalSound',
+  create: () => (type) => {
+    if(type !== 'dog') return
+    return 'Woof' 
+  }
+}
+
+const speak = {
+  needs: {animalSound: 'first'},
+  gives: 'speak',
+  create: (api) => api.animalSound
+}
+
+const sockets = combine([cats, dogs, speak])
+
+const mySpeak = sockets.speak[0]
+
+console.log(mySpeak('dog'))
+//Woof
+```
+
+### Using `map`
+
+```js
+const combine = require('depject')
+
+const cats = {
+  gives: 'name',
+  create: () => () => 'Fluffy' 
+}
+
+const dogs = {
+  gives: 'name',
+  create: () => () => 'Rex' 
+}
+
+const animals = {
+  needs: {name: 'map'},
+  gives: 'animals',
+  create: (api) => api.name
+}
+
+var sockets = combine([cats, dogs, animals])
+
+var myAnimals = sockets.animals[0]
+
+console.log(myAnimals())
+//['Fluffy', 'Rex']
+```
 
 ## api
 
-### combine ([modules...])
+### modules
 
-takes an array of modules and plugs every plug into the relavant socket.
+Each module is an object which exposes `{needs, gives, create}` properties. `needs` and `gives` describe the module features that this module requires, and exports.
 
-## graphs!
+`needs` is a map of names to types. `{<name> : "map"|"first"|"reduce"}`
 
-once you have assembled the modules, you may also generate a `.dot` file of the
-module graph, which can be interesting too look at.
+`gives` Is a string name of it's export, or if there are multiple exports an object where each key is a name `{<name>: true,...}`. 
 
-``` js
-//graph.js
-console.log(require('depject/graph')(modules))
+`create` Is a function that is called with an object connected to modules which provide the `needs` and must return a value which provides the `gives` or an object with keys that match what the module `gives`.
+
+### combine
+
+Actually connect all the modules together!
+Takes an array of modules, resolves dependencies and injects them into each module. 
+
+`combine([modules...])`
+
+This will return an array object of arrays of exports.
+
+## exporting more than one thing from a module
+
+```js
+const cats = {
+  gives: {name: true, animalSound: true},
+  create: () => ({
+    name: () => 'Fluffy',
+    animalSound: () => {
+      if(type !== 'cat') return
+      return 'Meow' 
+    }
+  }) 
+} 
 ```
 
-then run it through `dot`
+## requiring more than one thing into a module
 
-`node graph.js | dot -Tsvg > graph.svg`
+```js
+const animalSounds = {
+  needs: {name: 'map', animalSound: 'first'}
+} 
+```
 
-see also [patchbay graph](https://github.com/dominictarr/patchbay/blob/master/graph.svg)
+## deeply nested modules
+
+It's possible to pass deeply nested modules to combine eg:
+
+```js
+const modules = {
+  a: {
+    b: {
+      c: {
+        gives: 'yes',
+        create: function () {
+          return function () {
+            return true
+          }
+        }
+      }
+    },
+    d: {
+      e: {
+        needs: {
+          yes: 'first'
+        },
+        gives: 'no',
+        create: function (api) {
+          return function () {
+            return !api.yes()
+          }
+        }
+      }
+    }
+  }
+}
+
+const api = combine(modules)
+```
+
+### design questions
+
+Should `combine` have a way to specify the public interface?
+
+Should there be a way to create a routed plugin?
+i.e. check a field and call a specific plugin directly?
+
+How does this interact with interfaces provided remotely?
+i.e. muxrpc?
 
 ## License
 
-MIT
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+MIT © [Dominic Tarr](http://dominictarr.com)
