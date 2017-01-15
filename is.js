@@ -4,23 +4,12 @@ function isFunction (f) {
   return typeof f === 'function'
 }
 
-function isObject (o) {
-  return o && typeof o === 'object'
-}
-
 function isTrue (b) {
   return b === true
 }
 
 function isGives (o) {
   return isString(o) || N.each(o, isTrue)
-}
-
-function isAll (o, test) {
-  for (var k in o) {
-    if (!test(o[k])) return false
-  }
-  return true
 }
 
 function isType (t) {
