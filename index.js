@@ -11,8 +11,6 @@ module.exports = function combine () {
   var api = {}
 
   eachModule(modules, function (module, key) {
-    if (!isFunction(module.create)) { throw new Error('did not have a create function', key) }
-
     var deps = buildDeps(module.needs, api)
     var exported = module.create(deps)
 
