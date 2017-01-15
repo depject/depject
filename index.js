@@ -2,12 +2,6 @@ var N = require('libnested')
 
 var isModule = require('./is')
 
-function hasAll(set, keys) {
-  return keys.every(function (k) {
-    return !!set[k]
-  })
-}
-
 function isString (s) {
   return typeof s === 'string'
 }
@@ -22,7 +16,7 @@ function isFunction (f) {
 }
 
 function isObject (o) {
-  return o && 'object' === typeof o
+  return o && typeof o === 'object'
 }
 
 var apply = require('./apply')
@@ -52,8 +46,8 @@ module.exports = function combine () {
   var modules = [].slice.call(arguments).reduce(function (a, b) {
     eachModule(b, function (value, path) {
       var k = path.join('/')
-      if(!value) delete a[k]
-      else       a[k] = value
+      if (!value) delete a[k]
+      else a[k] = value
     })
     return a
   }, {})
@@ -100,10 +94,10 @@ module.exports = function combine () {
         return apply[type](a)
       })
 
-      if(!isFunction(module.create)){throw new Error('did not have a create function', key)}
+      if (!isFunction(module.create)) { throw new Error('did not have a create function', key) }
       // create module, and get function(s) it returns.
       var exported = module.create(m)
-      if(!exported) {throw new Error('export declared but not returned for', key)}
+      if (!exported) { throw new Error('export declared but not returned for', key) }
 
       // for the functions it declares, merge these into newSockets
       if (isString(module.gives)) {
@@ -130,12 +124,10 @@ module.exports = function combine () {
 
 function eachModule (obj, iter, _a) {
   _a = _a || []
-  for(var k in obj) {
-    if(isObject(obj[k])) {
-      if(isModule(obj[k])) iter(obj[k], _a.concat(k))
+  for (var k in obj) {
+    if (isObject(obj[k])) {
+      if (isModule(obj[k])) iter(obj[k], _a.concat(k))
       else eachModule(obj[k], iter, _a.concat(k))
-    }
-    // falsy overrides modules
-    else if (!obj[k]) iter(obj[k], _a.concat(k))
+    } else if (!obj[k]) iter(obj[k], _a.concat(k))
   }
 }
