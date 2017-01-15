@@ -38,6 +38,42 @@ test('nested combine', function (t) {
   t.end()
 })
 
+test('nested combine with mulitple args passed to combine', function (t) {
+  var module1 = {
+    a: {
+      b: {
+        c: {
+          gives: 'yes',
+          create: function () {
+            return function () {
+              return true
+            }
+          }
+        }
+      }
+    }
+  }
+  var module2 = {
+    d: {
+      e: {
+        needs: {
+          yes: 'first'
+        },
+        gives: 'no',
+        create: function (api) {
+          return function () {
+            return !api.yes()
+          }
+        }
+      }
+    }
+  }
+  var sockets = combine(module1, module2)
+  t.equal(sockets.yes[0](), true)
+  t.equal(sockets.no[0](), false)
+  t.end()
+})
+
 test('nested combine with other keys and values in surrounding objects', function (t) {
   var modules = {
     a: {
