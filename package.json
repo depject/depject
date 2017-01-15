@@ -17,6 +17,7 @@
     "libnested": "^1.1.0"
   },
   "devDependencies": {
+    "deep-freeze": "0.0.1",
     "dependency-check": "^2.7.0",
     "istanbul": "^0.4.5",
     "standard": "^8.6.0",

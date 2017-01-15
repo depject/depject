@@ -4,25 +4,27 @@ var isModule = require('./is')
 var apply = require('./apply')
 
 module.exports = function combine () {
-  var modules = flattenNested(arguments)
+  var unflattenedModules = Array.prototype.slice.call(arguments)
+  var modules = flattenNested(unflattenedModules)
 
-  throwIfMissingDeps(modules)
+  assertDependencies(modules)
 
-  var api = {}
+  var combinedModules = {}
 
-  eachModule(modules, function (module, key) {
-    var deps = buildDeps(module.needs, api)
-    var exported = module.create(deps)
+  for (var key in modules) {
+    var module = modules[key]
+    var dependencies = buildDependencies(module.needs, combinedModules)
+    var exported = module.create(dependencies)
 
-    if (!exported) { throw new Error('export declared but not returned for', key) }
-    addExportsToApi(exported, api, module)
-  })
+    if (!exported) { throw new Error('export declared but not returned for ' + key) }
+    addExportsToApi(exported, combinedModules, module)
+  }
 
-  if (isEmpty(api)) {
+  if (isEmpty(combinedModules)) {
     throw new Error('could not resolve any modules')
   }
 
-  return api
+  return combinedModules
 }
 
 function isString (s) {
@@ -44,18 +46,17 @@ function append (obj, path, value) {
   a.push(value)
 }
 
-function flattenNested (args) {
-  return [].slice.call(args).reduce(function (a, b) {
+function flattenNested (modules) {
+  return modules.reduce(function (a, b) {
     eachModule(b, function (value, path) {
       var k = path.join('/')
-      if (!value) delete a[k]
-      else a[k] = value
+      a[k] = value
     })
     return a
   }, {})
 }
 
-function throwIfMissingDeps (modules) {
+function assertDependencies (modules) {
   var allNeeds = {}
   var allGives = {}
 
@@ -89,7 +90,7 @@ function addExportsToApi (exported, api, module) {
   }
 }
 
-function buildDeps (needs, api) {
+function buildDependencies (needs, api) {
   return N.map(needs, function (type, path) {
     var a = N.get(api, path)
     if (!a) {
@@ -99,12 +100,12 @@ function buildDeps (needs, api) {
   })
 }
 
-function eachModule (obj, iter, _a) {
-  _a = _a || []
+function eachModule (obj, iter, path) {
+  path = path || []
   for (var k in obj) {
     if (isObject(obj[k])) {
-      if (isModule(obj[k])) iter(obj[k], _a.concat(k))
-      else eachModule(obj[k], iter, _a.concat(k))
-    } else if (!obj[k]) iter(obj[k], _a.concat(k))
+      if (isModule(obj[k])) iter(obj[k], path.concat(k))
+      else eachModule(obj[k], iter, path.concat(k))
+    }
   }
 }
