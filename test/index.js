@@ -76,6 +76,10 @@ test('one module depends on a module that depends on another', function (t) {
 
   var api = Combine([a, c, b])
   t.ok(api.a[0]())
+  api = Combine([a, b, c])
+  t.ok(api.a[0]())
+  api = Combine([c, b, a])
+  t.ok(api.a[0]())
   t.end()
 })
 
