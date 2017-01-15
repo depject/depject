@@ -34,10 +34,6 @@ function isEmpty (e) {
   return true
 }
 
-function isFunction (f) {
-  return typeof f === 'function'
-}
-
 function isObject (o) {
   return o && typeof o === 'object'
 }
