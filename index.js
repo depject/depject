@@ -1,5 +1,13 @@
 var N = require('libnested')
 
+var isModule = require('./is')
+
+function hasAll(set, keys) {
+  return keys.every(function (k) {
+    return !!set[k]
+  })
+}
+
 function isString (s) {
   return typeof s === 'string'
 }
@@ -11,6 +19,10 @@ function isEmpty (e) {
 
 function isFunction (f) {
   return typeof f === 'function'
+}
+
+function isObject (o) {
+  return o && 'object' === typeof o
 }
 
 var apply = require('./apply')
@@ -38,10 +50,11 @@ module.exports = function combine () {
   // iterate over array, and collect new plugs which are satisfyable.
 
   var modules = [].slice.call(arguments).reduce(function (a, b) {
-    for (var k in b) {
-      if (!b[k]) delete a[k]
-      else a[k] = b[k]
-    }
+    eachModule(b, function (value, path) {
+      var k = path.join('/')
+      if(!value) delete a[k]
+      else       a[k] = value
+    })
     return a
   }, {})
 
@@ -115,3 +128,14 @@ module.exports = function combine () {
   }
 }
 
+function eachModule (obj, iter, _a) {
+  _a = _a || []
+  for(var k in obj) {
+    if(isObject(obj[k])) {
+      if(isModule(obj[k])) iter(obj[k], _a.concat(k))
+      else eachModule(obj[k], iter, _a.concat(k))
+    }
+    // falsy overrides modules
+    else if (!obj[k]) iter(obj[k], _a.concat(k))
+  }
+}

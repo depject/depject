@@ -328,7 +328,7 @@ test('first throws an error when no functions are provided to take first', funct
 })
 
 test('combine throws an error when module does not have a create function', function (t) {
-  t.throws(() => Combine([{}]), /did not have a create function/)
+  t.throws(() => Combine([{}]), /could not resolve any modules/)
   t.end()
 })
 
