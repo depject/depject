@@ -2,6 +2,7 @@ var N = require('libnested')
 
 var isModule = require('./is')
 var apply = require('./apply')
+var assertGiven = require('./assertGiven')
 
 module.exports = function combine () {
   var nestedModules = Array.prototype.slice.call(arguments)
@@ -16,7 +17,8 @@ module.exports = function combine () {
     var needed = getNeeded(module.needs, combinedModules)
     var given = module.create(needed)
 
-    if (!given) { throw new Error('create function should return what it gives for module: ' + key) }
+    assertGiven(module.gives, given)
+
     addGivenToCombined(given, combinedModules, module)
   }
 
@@ -90,7 +92,7 @@ function addGivenToCombined (given, combined, module) {
   }
 }
 
-function getNeeded(needs, combined) {
+function getNeeded (needs, combined) {
   return N.map(needs, function (type, path) {
     var dependency = N.get(combined, path)
     if (!dependency) {

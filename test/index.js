@@ -353,7 +353,7 @@ test('combine throws an error when passed a module with a create when gives a st
     gives: 'nope',
     create: (api) => {}
   }
-  t.throws(() => Combine([a]), /create function should return what it gives/)
+  t.throws(() => Combine([a]), /create function should return a function or an object/)
   t.end()
 })
 
@@ -362,6 +362,6 @@ test('combine throws an error when passed a module with a create when gives is a
     gives: {nope: true},
     create: (api) => {}
   }
-  t.throws(() => Combine([a]), /create function should return what it gives/)
+  t.throws(() => Combine([a]), /create function should return a function or an object/)
   t.end()
 })

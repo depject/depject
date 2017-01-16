@@ -25,9 +25,9 @@
   },
   "scripts": {
     "test": "npm run test:node && npm run test:deps && npm run test:lint",
-    "test:node": "set -e; for t in test/*.js; do node $t; done",
+    "test:node": "tape test/*.js",
     "test:lint": "standard",
     "test:deps": "dependency-check . && dependency-check . --extra --no-dev",
-    "test:coverage": "NODE_ENV=test istanbul cover test"
+    "test:coverage": "NODE_ENV=test istanbul cover tape test/*.js"
   }
 }
