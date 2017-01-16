@@ -4,8 +4,8 @@ var isModule = require('./is')
 var apply = require('./apply')
 
 module.exports = function combine () {
-  var unflattenedModules = Array.prototype.slice.call(arguments)
-  var modules = flattenNested(unflattenedModules)
+  var nestedModules = Array.prototype.slice.call(arguments)
+  var modules = flattenNested(nestedModules)
 
   assertDependencies(modules)
 
