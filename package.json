@@ -17,6 +17,7 @@
     "libnested": "^1.1.0"
   },
   "devDependencies": {
+    "deep-freeze": "0.0.1",
     "dependency-check": "^2.7.0",
     "istanbul": "^0.4.5",
     "standard": "^8.6.0",
@@ -24,9 +25,9 @@
   },
   "scripts": {
     "test": "npm run test:node && npm run test:deps && npm run test:lint",
-    "test:node": "set -e; for t in test/*.js; do node $t; done",
+    "test:node": "tape test/*.js",
     "test:lint": "standard",
     "test:deps": "dependency-check . && dependency-check . --extra --no-dev",
-    "test:coverage": "NODE_ENV=test istanbul cover test"
+    "test:coverage": "NODE_ENV=test istanbul cover tape test/*.js"
   }
 }

@@ -6,7 +6,6 @@ test('combine is a function', function (t) {
   t.end()
 })
 
-
 test('combine one module', function (t) {
   const cats = {
     gives: 'cats',
@@ -76,6 +75,10 @@ test('one module depends on a module that depends on another', function (t) {
   }
 
   var api = Combine([a, c, b])
+  t.ok(api.a[0]())
+  api = Combine([a, b, c])
+  t.ok(api.a[0]())
+  api = Combine([c, b, a])
   t.ok(api.a[0]())
   t.end()
 })
@@ -274,55 +277,55 @@ test('a module can need multiple imports', function (t) {
   t.end()
 })
 
-test('throws an error when a needed module is not given', function(t) {
+test('throws an error when a needed module is not given', function (t) {
   const a = {
     needs: {ideas: 'first'},
-    create: (api) => api.b 
+    create: (api) => api.b
   }
   t.throws(() => Combine([a]), /export needed but not given/)
   t.end()
 })
 
-test('map throws an error when no functions are provided to map', function(t) {
+test('map throws an error when no functions are provided to map', function (t) {
   const a = {
     gives: 'a',
     needs: {ideas: 'map'},
-    create: (api) => api.ideas() 
+    create: (api) => api.ideas()
   }
   const b = {
     gives: 'ideas',
-    create: (api) => null 
+    create: (api) => null
   }
-  t.throws( () => Combine([a, b]), /no functions available/)
+  t.throws(() => Combine([a, b]), /no functions available/)
 
   t.end()
 })
 
-test('reduce throws an error when no functions are provided to reduce', function(t) {
+test('reduce throws an error when no functions are provided to reduce', function (t) {
   const a = {
     gives: 'a',
     needs: {ideas: 'reduce'},
-    create: (api) => api.ideas() 
+    create: (api) => api.ideas()
   }
   const b = {
     gives: 'ideas',
-    create: (api) => null 
+    create: (api) => null
   }
-  t.throws( () => Combine([a, b]), /no functions available/)
+  t.throws(() => Combine([a, b]), /no functions available/)
 
   t.end()
 })
 
-test('first throws an error when no functions are provided to take first', function(t) {
+test('first throws an error when no functions are provided to take first', function (t) {
   const a = {
     needs: {ideas: 'first'},
-    create: (api) => api.ideas() 
+    create: (api) => api.ideas()
   }
   const b = {
     gives: 'ideas',
-    create: (api) => null 
+    create: (api) => null
   }
-  t.throws( () => Combine([a, b]), /no functions available/)
+  t.throws(() => Combine([a, b]), /no functions available/)
 
   t.end()
 })
@@ -339,7 +342,7 @@ test('combine throws an error when not passed anything', function (t) {
 
 test('combine throws an error when passed a module with a create but no gives', function (t) {
   const a = {
-    create: (api) => () => true 
+    create: (api) => () => true
   }
   t.throws(() => Combine([a]), /could not resolve any modules/)
   t.end()
@@ -348,17 +351,17 @@ test('combine throws an error when passed a module with a create but no gives', 
 test('combine throws an error when passed a module with a create when gives a string', function (t) {
   const a = {
     gives: 'nope',
-    create: (api) => {} 
+    create: (api) => {}
   }
-  t.throws(() => Combine([a]), /export declared but not returned/)
+  t.throws(() => Combine([a]), /create function should return a function or an object/)
   t.end()
 })
 
 test('combine throws an error when passed a module with a create when gives is an object', function (t) {
   const a = {
     gives: {nope: true},
-    create: (api) => {} 
+    create: (api) => {}
   }
-  t.throws(() => Combine([a]), /export declared but not returned/)
+  t.throws(() => Combine([a]), /create function should return a function or an object/)
   t.end()
 })
