@@ -1,15 +1,15 @@
 var N = require('libnested')
 
-module.exports = function assertGiven (gives, given) {
+module.exports = function assertGiven (gives, given, key) {
   if (!given) {
-    throw new Error('create function should return a function or an object')
+    throw new Error('create function should return a function or an object in: ' + key)
   }
 
   if (typeof gives === 'string' && typeof given !== 'function') {
-    throw new Error('create function should return a function when gives is a string')
+    throw new Error('create function should return a function when gives is a string in: ' + key)
   } else if (isObject(gives) && isObject(given)) {
     firstMissingKey(gives, given, function (path) {
-      throw new Error('keys returned by create must match keys in given. missing: ' + path.join(', '))
+      throw new Error('keys returned by create must match keys in given. missing: ' + path.join('.') + ' in ' + key)
     })
   }
 }

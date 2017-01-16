@@ -17,7 +17,7 @@ module.exports = function combine () {
     var needed = getNeeded(module.needs, combinedModules)
     var given = module.create(needed)
 
-    assertGiven(module.gives, given)
+    assertGiven(module.gives, given, key)
 
     addGivenToCombined(given, combinedModules, module)
   }
@@ -62,10 +62,10 @@ function assertDependencies (modules) {
   var allNeeds = {}
   var allGives = {}
 
-  for (var k in modules) {
-    var module = modules[k]
+  for (var key in modules) {
+    var module = modules[key]
     N.each(module.needs, function (v, path) {
-      N.set(allNeeds, path, true)
+      N.set(allNeeds, path, key)
     })
     if (isString(module.gives)) {
       N.set(allGives, [module.gives], true)
@@ -76,8 +76,8 @@ function assertDependencies (modules) {
     }
   }
 
-  N.each(allNeeds, function (_, path) {
-    if (!N.get(allGives, path)) { throw new Error('export needed but not given ' + path.join('.') + ' in: ' + path) }
+  N.each(allNeeds, function (key, path) {
+    if (!N.get(allGives, path)) { throw new Error('export needed but not given ' + path.join('.') + ' in: ' + key) }
   })
 }
 
