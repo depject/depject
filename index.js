@@ -13,11 +13,11 @@ module.exports = function combine () {
 
   for (var key in modules) {
     var module = modules[key]
-    var dependencies = buildDependencies(module.needs, combinedModules)
-    var exported = module.create(dependencies)
+    var dependencies = getNeededDependencies(module.needs, combinedModules)
+    var given = module.create(dependencies)
 
-    if (!exported) { throw new Error('export declared but not returned for ' + key) }
-    addExportsToApi(exported, combinedModules, module)
+    if (!given) { throw new Error('export declared but not returned for ' + key) }
+    addGivenToCombined(given, combinedModules, module)
   }
 
   if (isEmpty(combinedModules)) {
@@ -79,24 +79,24 @@ function assertDependencies (modules) {
   })
 }
 
-function addExportsToApi (exported, api, module) {
+function addGivenToCombined (given, combined, module) {
   if (isString(module.gives)) {
-    append(api, [module.gives], exported)
+    append(combined, [module.gives], given)
   } else {
     N.each(module.gives, function (_, path) {
-      var fun = N.get(exported, path)
-      append(api, path, fun)
+      var fun = N.get(given, path)
+      append(combined, path, fun)
     })
   }
 }
 
-function buildDependencies (needs, api) {
+function getNeededDependencies (needs, combined) {
   return N.map(needs, function (type, path) {
-    var a = N.get(api, path)
-    if (!a) {
-      a = N.set(api, path, [])
+    var dependency = N.get(combined, path)
+    if (!dependency) {
+      dependency = N.set(combined, path, [])
     }
-    return apply[type](a)
+    return apply[type](dependency)
   })
 }
 
