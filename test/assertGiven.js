@@ -42,13 +42,17 @@ test('throws when gives is an object and given is an object with keys that do no
   t.end()
 })
 
-test('throws when gives is an object and given is an object with keys that do not match 2', function (t) {
+test('throws when gives is a nested object and given is a nested object with keys that do not match', function (t) {
   var given = {
-    dogs: function () {},
-    cats: function () {}
+    animals: {
+      dogs: function () {}
+    }
   }
   var gives = {
-    cats: true
+    animals: {
+      cats: true,
+      dogs: true
+    }
   }
   t.throws(() => assertGiven(gives, given))
   t.end()
