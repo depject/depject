@@ -13,8 +13,8 @@ module.exports = function combine () {
 
   for (var key in modules) {
     var module = modules[key]
-    var dependencies = getNeededDependencies(module.needs, combinedModules)
-    var given = module.create(dependencies)
+    var needed = getNeeded(module.needs, combinedModules)
+    var given = module.create(needed)
 
     if (!given) { throw new Error('export declared but not returned for ' + key) }
     addGivenToCombined(given, combinedModules, module)
@@ -90,7 +90,7 @@ function addGivenToCombined (given, combined, module) {
   }
 }
 
-function getNeededDependencies (needs, combined) {
+function getNeeded(needs, combined) {
   return N.map(needs, function (type, path) {
     var dependency = N.get(combined, path)
     if (!dependency) {
