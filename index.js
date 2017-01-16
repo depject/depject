@@ -16,7 +16,7 @@ module.exports = function combine () {
     var needed = getNeeded(module.needs, combinedModules)
     var given = module.create(needed)
 
-    if (!given) { throw new Error('export declared but not returned for ' + key) }
+    if (!given) { throw new Error('create function should return what it gives for module: ' + key) }
     addGivenToCombined(given, combinedModules, module)
   }
 
