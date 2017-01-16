@@ -77,7 +77,7 @@ function assertDependencies (modules) {
   }
 
   N.each(allNeeds, function (_, path) {
-    if (!N.get(allGives, path)) { throw new Error('export needed but not given' + path.join('.') + ' in: ' + path) }
+    if (!N.get(allGives, path)) { throw new Error('export needed but not given ' + path.join('.') + ' in: ' + path) }
   })
 }
 
