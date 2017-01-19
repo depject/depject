@@ -77,7 +77,7 @@ function assertDependencies (modules) {
   }
 
   N.each(allNeeds, function (key, path) {
-    if (!N.get(allGives, path)) { throw new Error('missing module, not given: (' + path.join('.') + '), needed by a module ' + ((isNaN(key)) ? '(' + key + ')' : '')) }
+    if (!N.get(allGives, path)) { throw new Error('unmet need: `' + path.join('.') + '`, needed by module ' + ((isNaN(key)) ? '`' + key + '`' : '')) }
   })
 }
 
