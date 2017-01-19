@@ -282,7 +282,7 @@ test('throws an error when a needed module is not given', function (t) {
     needs: {ideas: 'first'},
     create: (api) => api.b
   }
-  t.throws(() => Combine([a]), /export needed but not given/)
+  t.throws(() => Combine([a]), /missing module/)
   t.end()
 })
 
