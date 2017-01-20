@@ -4,6 +4,7 @@
   "version": "3.1.1",
   "homepage": "https://github.com/dominictarr/depject",
   "author": "Dominic Tarr (http://dominictarr.com)",
+  "maintainers": [ "ahdinosaur", "pietgeursen", "mixmix"],
   "repository": "dominictarr/depject",
   "bugs": {
     "url": "https://github.com/dominictarr/depject/issues"
