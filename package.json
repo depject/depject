@@ -1,10 +1,14 @@
 {
   "name": "depject",
   "description": "simplest dependency injection",
-  "version": "3.1.4",
+  "version": "3.1.5",
   "homepage": "https://github.com/dominictarr/depject",
   "author": "Dominic Tarr (http://dominictarr.com)",
-  "maintainers": [ "ahdinosaur", "pietgeursen", "mixmix"],
+  "maintainers": [
+    "ahdinosaur",
+    "pietgeursen",
+    "mixmix"
+  ],
   "repository": "dominictarr/depject",
   "bugs": {
     "url": "https://github.com/dominictarr/depject/issues"
