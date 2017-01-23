@@ -15,7 +15,6 @@ module.exports = {
         var _value = funs[i].apply(this, args)
         if (_value !== undefined) return _value
       }
-      return _value
     }
   },
   map: function (funs) {
