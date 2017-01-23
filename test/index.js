@@ -188,7 +188,7 @@ test('when a module needs the first of dependencies it receives the first module
   }
   const b = {
     gives: 'ideas',
-    create: () => () => null
+    create: () => () => {}
   }
   const c = {
     gives: 'ideas',
