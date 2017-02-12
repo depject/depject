@@ -45,7 +45,7 @@ test('combine two modules', function (t) {
   t.end()
 })
 
-test('combine takes an array of modules and throws if not an array', function (t) {
+test('combine can take a single module', function (t) {
   t.plan(1)
 
   const cats = {
@@ -55,7 +55,10 @@ test('combine takes an array of modules and throws if not an array', function (t
     }
   }
 
-  t.throws(() => Combine(cats))
+  const sockets = Combine(cats)
+
+  t.ok(sockets.cats, 'Combine returns an object with keys that match the keys given by all the modules')
+  t.end()
 })
 
 test('one module depends on a module that depends on another', function (t) {
