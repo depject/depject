@@ -1,9 +1,9 @@
 module.exports = {
   reduce: function (funs) {
-    return function (value) {
+    return function (value, context) {
       if (!funs.length) throw new Error('depject.reduce: no functions available to reduce')
       return funs.reduce(function (value, fn) {
-        return fn(value)
+        return fn(value, context)
       }, value)
     }
   },
