@@ -33,6 +33,7 @@
     "test:node": "tape test/*.js",
     "test:lint": "standard",
     "test:deps": "dependency-check . && dependency-check . --extra --no-dev",
-    "test:coverage": "NODE_ENV=test istanbul cover tape test/*.js"
+    "test:coverage": "NODE_ENV=test istanbul cover tape test/*.js",
+    "build": "browserify expose.js > expose.bundle.js"
   }
 }
