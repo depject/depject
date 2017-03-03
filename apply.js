@@ -13,7 +13,7 @@ module.exports = {
       var args = [].slice.call(arguments)
       for (var i = 0; i < funs.length; i++) {
         var _value = funs[i].apply(this, args)
-        if (_value) return _value
+        if (_value !== undefined) return _value
       }
     }
   },
