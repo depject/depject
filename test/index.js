@@ -277,6 +277,27 @@ test('a module can need multiple imports', function (t) {
   t.end()
 })
 
+test('a needed module can return 0', function (t) {
+  t.plan(2)
+
+  const decrement = {
+    gives: 'decrement',
+    create: () => i => i - 1
+  }
+
+  const decrementOne = {
+    gives: 'decrementOne',
+    needs: {decrement: 'first'},
+    create: api => () => api.decrement(1)
+  }
+
+  const sockets = Combine([decrement, decrementOne])
+
+  t.equal(sockets.decrement[0](1), 0, 'decrement returns zero')
+  t.equal(sockets.decrementOne[0](), 0, 'decrementOne returns zero')
+  t.end()
+})
+
 test('throws an error when a needed module is not given', function (t) {
   const a = {
     needs: {ideas: 'first'},
