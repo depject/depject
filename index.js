@@ -1,6 +1,5 @@
 var N = require('libnested')
 
-var isModule = require('./is')
 var assertGiven = require('./assertGiven')
 var getNeeded = require('./entry')
 var eachModule = require('./each')
@@ -39,10 +38,6 @@ function isEmpty (e) {
   return true
 }
 
-function isObject (o) {
-  return o && typeof o === 'object'
-}
-
 function append (obj, path, value) {
   var a = N.get(obj, path)
   if (!a) N.set(obj, path, a = [])
@@ -52,7 +47,7 @@ function append (obj, path, value) {
 function flattenNested (modules) {
   return modules.reduce(function (a, b) {
     eachModule(b, function (value, path) {
-      var k = path.join('/')
+      var k = (value.path || path).join('/')
       a[k] = value
     })
     return a

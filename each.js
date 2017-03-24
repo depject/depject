@@ -1,3 +1,5 @@
+var isModule = require('./is')
+
 module.exports = function eachModule (obj, iter, path) {
   path = path || []
   if (isModule(obj)) iter(obj, path.concat(k))
@@ -6,4 +8,8 @@ module.exports = function eachModule (obj, iter, path) {
       eachModule(obj[k], iter, path.concat(k))
     }
   }
+}
+
+function isObject (o) {
+  return o && typeof o === 'object'
 }
