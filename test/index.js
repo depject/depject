@@ -386,6 +386,18 @@ test('combine throws an error when passed a module with a create when gives is a
     gives: {nope: true},
     create: (api) => {}
   }
-  t.throws(() => Combine([a]), /create function should return a function or an object/)
+  t.throws(() => Combine([a]), /create function should return a function or an object in: 0/)
   t.end()
 })
+
+test('module with a path', function (t) {
+  const a = {
+    path: ['the', 'best', 'cats', 'module', 'ever'],
+    gives: 'cats',
+    create: (api) => {}
+  }
+
+  t.throws(() => Combine([a]), /create function should return a function or an object in: the\/best\/cats\/module\/ever/)
+  t.end()
+})
+
