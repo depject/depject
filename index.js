@@ -3,6 +3,7 @@ var N = require('libnested')
 var isModule = require('./is')
 var assertGiven = require('./assertGiven')
 var getNeeded = require('./entry')
+var eachModule = require('./each')
 
 module.exports = function combine () {
   var nestedModules = Array.prototype.slice.call(arguments)
@@ -89,15 +90,5 @@ function addGivenToCombined (given, combined, module) {
       var fun = N.get(given, path)
       append(combined, path, fun)
     })
-  }
-}
-
-function eachModule (obj, iter, path) {
-  path = path || []
-  if (isModule(obj)) iter(obj, path.concat(k))
-  for (var k in obj) {
-    if (isObject(obj[k])) {
-      eachModule(obj[k], iter, path.concat(k))
-    }
   }
 }
