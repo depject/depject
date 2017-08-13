@@ -45,7 +45,7 @@ test('combine two modules', function (t) {
   t.end()
 })
 
-test('combine takes an array of modules and throws if not an array', function (t) {
+test('combine can take a single module', function (t) {
   t.plan(1)
 
   const cats = {
@@ -55,7 +55,10 @@ test('combine takes an array of modules and throws if not an array', function (t
     }
   }
 
-  t.throws(() => Combine(cats))
+  const sockets = Combine(cats)
+
+  t.ok(sockets.cats, 'Combine returns an object with keys that match the keys given by all the modules')
+  t.end()
 })
 
 test('one module depends on a module that depends on another', function (t) {
@@ -188,7 +191,7 @@ test('when a module needs the first of dependencies it receives the first module
   }
   const b = {
     gives: 'ideas',
-    create: () => () => null
+    create: () => () => {}
   }
   const c = {
     gives: 'ideas',
@@ -277,6 +280,27 @@ test('a module can need multiple imports', function (t) {
   t.end()
 })
 
+test('a needed module can return 0', function (t) {
+  t.plan(2)
+
+  const decrement = {
+    gives: 'decrement',
+    create: () => i => i - 1
+  }
+
+  const decrementOne = {
+    gives: 'decrementOne',
+    needs: {decrement: 'first'},
+    create: api => () => api.decrement(1)
+  }
+
+  const sockets = Combine([decrement, decrementOne])
+
+  t.equal(sockets.decrement[0](1), 0, 'decrement returns zero')
+  t.equal(sockets.decrementOne[0](), 0, 'decrementOne returns zero')
+  t.end()
+})
+
 test('throws an error when a needed module is not given', function (t) {
   const a = {
     needs: {ideas: 'first'},
@@ -362,6 +386,18 @@ test('combine throws an error when passed a module with a create when gives is a
     gives: {nope: true},
     create: (api) => {}
   }
-  t.throws(() => Combine([a]), /create function should return a function or an object/)
+  t.throws(() => Combine([a]), /create function should return a function or an object in: 0/)
   t.end()
 })
+
+test('module with a path', function (t) {
+  const a = {
+    path: ['the', 'best', 'cats', 'module', 'ever'],
+    gives: 'cats',
+    create: (api) => {}
+  }
+
+  t.throws(() => Combine([a]), /create function should return a function or an object in: the\/best\/cats\/module\/ever/)
+  t.end()
+})
+

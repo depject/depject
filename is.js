@@ -21,7 +21,7 @@ function isNeeds (n) {
 }
 
 function isModule (m) {
-  return isFunction(m.create) && isGives(m.gives) && (!m.needs || isNeeds(m.needs))
+  return m && isFunction(m.create) && isGives(m.gives) && (!m.needs || isNeeds(m.needs))
 }
 
 function isString (s) {

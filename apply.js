@@ -3,10 +3,10 @@ function toErrorMessage (type, path) {
 }
 module.exports = {
   reduce: function (funs, path) {
-    return function (value) {
+    return function (value, context) {
       if (!funs.length) throw new Error(toErrorMessage('reduce', path))
       return funs.reduce(function (value, fn) {
-        return fn(value)
+        return fn(value, context)
       }, value)
     }
   },
@@ -16,7 +16,7 @@ module.exports = {
       var args = [].slice.call(arguments)
       for (var i = 0; i < funs.length; i++) {
         var _value = funs[i].apply(this, args)
-        if (_value) return _value
+        if (_value !== undefined) return _value
       }
     }
   },
