@@ -98,7 +98,7 @@ function getNeeded (needs, combined) {
     if (!dependency) {
       dependency = N.set(combined, path, [])
     }
-    return apply[type](dependency)
+    return apply[type](dependency, path.join('.'))
   })
 }
 
