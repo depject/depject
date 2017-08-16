@@ -8,6 +8,6 @@ module.exports = function entry (sockets, needs) {
     if (!dependency) {
       dependency = N.set(sockets, path, [])
     }
-    return apply[type](dependency)
+    return apply[type](dependency, path.join('.'))
   })
 }
