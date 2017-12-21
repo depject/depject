@@ -152,7 +152,7 @@ const cats = {
   gives: {name: true, animalSound: true},
   create: () => ({
     name: () => 'Fluffy',
-    animalSound: () => {
+    animalSound: (type) => {
       if(type !== 'cat') return
       return 'Meow'
     }
