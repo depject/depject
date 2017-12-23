@@ -1,4 +1,4 @@
-# depject 
+# depject
 
 > simplest dependency injection
 
@@ -8,7 +8,7 @@
 $ npm install --save depject
 ```
 
-## philosophy 
+## philosophy
 
 A module exposes features to be used by other modules,
 and may also depend on features provided by other modules.
@@ -69,7 +69,7 @@ const cats = {
   gives: 'animalSound',
   create: () => (type) => {
     if(type !== 'cat') return
-    return 'Meow' 
+    return 'Meow'
   }
 }
 
@@ -77,7 +77,7 @@ const dogs = {
   gives: 'animalSound',
   create: () => (type) => {
     if(type !== 'dog') return
-    return 'Woof' 
+    return 'Woof'
   }
 }
 
@@ -102,12 +102,12 @@ const combine = require('depject')
 
 const cats = {
   gives: 'name',
-  create: () => () => 'Fluffy' 
+  create: () => () => 'Fluffy'
 }
 
 const dogs = {
   gives: 'name',
-  create: () => () => 'Rex' 
+  create: () => () => 'Rex'
 }
 
 const animals = {
@@ -132,14 +132,14 @@ Each module is an object which exposes `{needs, gives, create}` properties. `nee
 
 `needs` is a map of names to types. `{<name> : "map"|"first"|"reduce"}`
 
-`gives` Is a string name of it's export, or if there are multiple exports an object where each key is a name `{<name>: true,...}`. 
+`gives` Is a string name of it's export, or if there are multiple exports an object where each key is a name `{<name>: true,...}`.
 
 `create` Is a function that is called with an object connected to modules which provide the `needs` and must return a value which provides the `gives` or an object with keys that match what the module `gives`.
 
 ### combine
 
 Actually connect all the modules together!
-Takes an array of modules, resolves dependencies and injects them into each module. 
+Takes an array of modules, resolves dependencies and injects them into each module.
 
 `combine([modules...])`
 
@@ -152,12 +152,12 @@ const cats = {
   gives: {name: true, animalSound: true},
   create: () => ({
     name: () => 'Fluffy',
-    animalSound: () => {
+    animalSound: (type) => {
       if(type !== 'cat') return
-      return 'Meow' 
+      return 'Meow'
     }
-  }) 
-} 
+  })
+}
 ```
 
 ## requiring more than one thing into a module
@@ -165,7 +165,7 @@ const cats = {
 ```js
 const animalSounds = {
   needs: {name: 'map', animalSound: 'first'}
-} 
+}
 ```
 
 ## deeply nested modules
