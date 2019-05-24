@@ -8,6 +8,8 @@ module.exports = function entry (sockets, needs) {
     if (!dependency) {
       dependency = N.set(sockets, path, [])
     }
+    
+    if (!apply[type]) throw new Error(`depeject#entry: typo "${type}", choose one of: first | map | reduce`)
     return apply[type](dependency, path.join('.'))
   })
 }
